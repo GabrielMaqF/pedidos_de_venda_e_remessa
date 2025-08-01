@@ -26,6 +26,8 @@ import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.Projet
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.VendedorEntity;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.base.BaseComposedEntity;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.id.EntidadeCompostaId;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.id.OrdemServicoId;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.relatorio.listar_ordem_servico.OrdemServicoEntity;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.repository.CategoriaRepository;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.repository.ClienteRepository;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.repository.ContaCorrenteRepository;
@@ -33,6 +35,7 @@ import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.repository.Depa
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.repository.EmpresaRepository;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.repository.ProjetoRepository;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.repository.VendedorRepository;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.repository.relatorio.OrdemServicoRepository;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.microsoft.sharepoint.dto.CategoriaDTO;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.microsoft.sharepoint.dto.ClienteDTO;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.microsoft.sharepoint.dto.ContaCorrenteDTO;
@@ -49,6 +52,9 @@ import com.automatizacoes_java.pedidos_de_venda_e_remessa.microsoft.sharepoint.s
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.microsoft.sharepoint.service.EmpresaSharepointService;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.microsoft.sharepoint.service.ProjetoSharepointService;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.microsoft.sharepoint.service.VendedorSharepointService;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.dto.listar_ordem_servico.OrdemServicoDTO;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.response.OmieListarOsResponse;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.service.OmieApiClientService;
 
 @Service
 public class SincronizacaoService {
@@ -86,6 +92,12 @@ public class SincronizacaoService {
 	@Autowired
 	private VendedorRepository vendedorRepository;
 
+	// --- INJEÇÃO DE DEPENDÊNCIAS | OMIE ---
+	@Autowired
+	private OmieApiClientService omieApiService;
+	@Autowired
+	private OrdemServicoRepository ordemServicoRepository;
+
 	public void sincronizarTudo() {
 		logger.info("--- INICIANDO ROTINA DE SINCRONIZAÇÃO COMPLETA ---");
 		try {
@@ -101,40 +113,7 @@ public class SincronizacaoService {
 			logger.error("!!! ERRO CRÍTICO DURANTE A SINCRONIZAÇÃO !!!", e);
 		}
 	}
-	@Transactional
-	public void sincronizarEmpresas() throws ExecutionException, InterruptedException {
-	    logger.info("Sincronizando Empresas...");
-	    List<EmpresaDTO> dtos = empresaSharepointService.listarTodos().get();
-	    if (dtos.isEmpty()) {
-	        logger.info("Nenhuma empresa encontrada no SharePoint para sincronizar.");
-	        return;
-	    }
 
-	    // 1. Coletar os códigos das empresas (que são as chaves primárias)
-	    Set<Long> codigosEmpresa = dtos.stream()
-	            .map(EmpresaDTO::getCodigoEmpresa)
-	            .collect(Collectors.toSet());
-
-	    // 2. Buscar as entidades existentes pelos seus códigos
-	    Map<Long, EmpresaEntity> entidadesExistentes = empresaRepository.findAllById(codigosEmpresa).stream()
-	            .collect(Collectors.toMap(EmpresaEntity::getCodigo, Function.identity()));
-
-	    List<EmpresaEntity> entidadesParaSalvar = new ArrayList<>();
-	    for (EmpresaDTO dto : dtos) {
-	        // 3. Verificar se a entidade existe usando o código da empresa
-	        EmpresaEntity entidade = entidadesExistentes.get(dto.getCodigoEmpresa());
-	        if (entidade != null) {
-	            entidade.atualizarDados(dto);
-	        } else {
-	            entidade = new EmpresaEntity(dto);
-	        }
-	        entidadesParaSalvar.add(entidade);
-	    }
-
-	    empresaRepository.saveAll(entidadesParaSalvar);
-	    logger.info("Sincronização de Empresas concluída. {} registros processados.", entidadesParaSalvar.size());
-	}
-/*
 	@Transactional
 	public void sincronizarEmpresas() throws ExecutionException, InterruptedException {
 		logger.info("Sincronizando Empresas...");
@@ -144,14 +123,16 @@ public class SincronizacaoService {
 			return;
 		}
 
-		// CORREÇÃO 1: Usar o código da empresa (PK) para buscar e mapear.
+		// 1. Coletar os códigos das empresas (que são as chaves primárias)
 		Set<Long> codigosEmpresa = dtos.stream().map(EmpresaDTO::getCodigoEmpresa).collect(Collectors.toSet());
+
+		// 2. Buscar as entidades existentes pelos seus códigos
 		Map<Long, EmpresaEntity> entidadesExistentes = empresaRepository.findAllById(codigosEmpresa).stream()
 				.collect(Collectors.toMap(EmpresaEntity::getCodigo, Function.identity()));
 
 		List<EmpresaEntity> entidadesParaSalvar = new ArrayList<>();
 		for (EmpresaDTO dto : dtos) {
-			// CORREÇÃO 2: Usar o código da empresa para a busca no mapa.
+			// 3. Verificar se a entidade existe usando o código da empresa
 			EmpresaEntity entidade = entidadesExistentes.get(dto.getCodigoEmpresa());
 			if (entidade != null) {
 				entidade.atualizarDados(dto);
@@ -164,7 +145,31 @@ public class SincronizacaoService {
 		empresaRepository.saveAll(entidadesParaSalvar);
 		logger.info("Sincronização de Empresas concluída. {} registros processados.", entidadesParaSalvar.size());
 	}
-	*/
+	/*
+	 * @Transactional public void sincronizarEmpresas() throws ExecutionException,
+	 * InterruptedException { logger.info("Sincronizando Empresas...");
+	 * List<EmpresaDTO> dtos = empresaSharepointService.listarTodos().get(); if
+	 * (dtos.isEmpty()) {
+	 * logger.info("Nenhuma empresa encontrada no SharePoint para sincronizar.");
+	 * return; }
+	 * 
+	 * // CORREÇÃO 1: Usar o código da empresa (PK) para buscar e mapear. Set<Long>
+	 * codigosEmpresa =
+	 * dtos.stream().map(EmpresaDTO::getCodigoEmpresa).collect(Collectors.toSet());
+	 * Map<Long, EmpresaEntity> entidadesExistentes =
+	 * empresaRepository.findAllById(codigosEmpresa).stream()
+	 * .collect(Collectors.toMap(EmpresaEntity::getCodigo, Function.identity()));
+	 * 
+	 * List<EmpresaEntity> entidadesParaSalvar = new ArrayList<>(); for (EmpresaDTO
+	 * dto : dtos) { // CORREÇÃO 2: Usar o código da empresa para a busca no mapa.
+	 * EmpresaEntity entidade = entidadesExistentes.get(dto.getCodigoEmpresa()); if
+	 * (entidade != null) { entidade.atualizarDados(dto); } else { entidade = new
+	 * EmpresaEntity(dto); } entidadesParaSalvar.add(entidade); }
+	 * 
+	 * empresaRepository.saveAll(entidadesParaSalvar);
+	 * logger.info("Sincronização de Empresas concluída. {} registros processados.",
+	 * entidadesParaSalvar.size()); }
+	 */
 
 	@Transactional
 	public void sincronizarCategorias() throws ExecutionException, InterruptedException {
@@ -240,12 +245,13 @@ public class SincronizacaoService {
 			EmpresaEntity empresa = mapaDeEmpresas.get(empresaNomeExtractor.apply(dto));
 			return empresa != null ? idCreator.apply(dto, empresa) : null;
 		}).filter(id -> id != null).collect(Collectors.toSet());
-		
+
 		/*
-		Map<EntidadeCompostaId, T_ENTITY> entidadesExistentes = repository.findAllById(idsParaBuscar).stream()
-				.collect(Collectors.toMap(T_ENTITY::getId, Function.identity()));
-		*/
-		
+		 * Map<EntidadeCompostaId, T_ENTITY> entidadesExistentes =
+		 * repository.findAllById(idsParaBuscar).stream()
+		 * .collect(Collectors.toMap(T_ENTITY::getId, Function.identity()));
+		 */
+
 		// Converte o Set para uma List para poder dividir em lotes
 		List<EntidadeCompostaId> idsList = new ArrayList<>(idsParaBuscar);
 		int batchSize = 500; // Um tamanho de lote razoável para a maioria dos bancos de dados
@@ -253,15 +259,40 @@ public class SincronizacaoService {
 
 		// Itera sobre a lista de IDs em lotes de 'batchSize'
 		for (int i = 0; i < idsList.size(); i += batchSize) {
-		    int end = Math.min(i + batchSize, idsList.size());
-		    List<EntidadeCompostaId> batchIds = idsList.subList(i, end);
-		    
-		    // Busca apenas um lote de cada vez e adiciona ao mapa de resultados
-		    repository.findAllById(batchIds).forEach(entity -> entidadesExistentes.put(entity.getId(), entity));
+			int end = Math.min(i + batchSize, idsList.size());
+			List<EntidadeCompostaId> batchIds = idsList.subList(i, end);
+
+			// Busca apenas um lote de cada vez e adiciona ao mapa de resultados
+			repository.findAllById(batchIds).forEach(entity -> entidadesExistentes.put(entity.getId(), entity));
 		}
-		
+
 		/*
-		List<T_ENTITY> entidadesParaSalvar = new ArrayList<>();
+		 * List<T_ENTITY> entidadesParaSalvar = new ArrayList<>(); for (T_DTO dto :
+		 * dtos) { EmpresaEntity empresaAssociada =
+		 * mapaDeEmpresas.get(empresaNomeExtractor.apply(dto)); if (empresaAssociada ==
+		 * null) { logger.
+		 * warn("{} com SharePoint ID '{}' ignorado(a): empresa '{}' não encontrada.",
+		 * entidadeNome, dto.getId(), empresaNomeExtractor.apply(dto)); continue; }
+		 * 
+		 * EntidadeCompostaId idAtual = idCreator.apply(dto, empresaAssociada); T_ENTITY
+		 * entidade = entidadesExistentes.get(idAtual);
+		 * 
+		 * if (entidade != null) { // Garante que a referência da empresa esteja
+		 * atualizada entidade.setEmpresa(empresaAssociada);
+		 * entityUpdater.accept(entidade, dto); } else { entidade =
+		 * entityCreator.apply(dto, empresaAssociada); }
+		 * entidadesParaSalvar.add(entidade); }
+		 * 
+		 * repository.saveAll(entidadesParaSalvar);
+		 * logger.info("Sincronização de {} concluída. {} registros processados.",
+		 * entidadeNome, entidadesParaSalvar.size());
+		 */
+
+		// Bloco novo com salvamento em lotes
+		List<T_ENTITY> loteParaSalvar = new ArrayList<>();
+		final int batchSizeSave = 500; // O mesmo tamanho do lote de leitura ou um valor otimizado para escrita.
+		int totalProcessado = 0;
+
 		for (T_DTO dto : dtos) {
 			EmpresaEntity empresaAssociada = mapaDeEmpresas.get(empresaNomeExtractor.apply(dto));
 			if (empresaAssociada == null) {
@@ -274,61 +305,219 @@ public class SincronizacaoService {
 			T_ENTITY entidade = entidadesExistentes.get(idAtual);
 
 			if (entidade != null) {
-				// Garante que a referência da empresa esteja atualizada
 				entidade.setEmpresa(empresaAssociada);
 				entityUpdater.accept(entidade, dto);
 			} else {
 				entidade = entityCreator.apply(dto, empresaAssociada);
 			}
-			entidadesParaSalvar.add(entidade);
+			loteParaSalvar.add(entidade);
+
+			// Verifica se o lote atingiu o tamanho máximo
+			if (loteParaSalvar.size() == batchSizeSave) {
+				repository.saveAll(loteParaSalvar);
+				totalProcessado += loteParaSalvar.size();
+				loteParaSalvar.clear(); // Limpa a lista para o próximo lote
+				logger.info("... {} {} processados...", totalProcessado, entidadeNome);
+			}
 		}
 
-		repository.saveAll(entidadesParaSalvar);
-		logger.info("Sincronização de {} concluída. {} registros processados.", entidadeNome,
-				entidadesParaSalvar.size());
-		*/
-		
-		// Bloco novo com salvamento em lotes
-		List<T_ENTITY> loteParaSalvar = new ArrayList<>();
-		final int batchSizeSave = 500; // O mesmo tamanho do lote de leitura ou um valor otimizado para escrita.
-		int totalProcessado = 0;
-
-		for (T_DTO dto : dtos) {
-		    EmpresaEntity empresaAssociada = mapaDeEmpresas.get(empresaNomeExtractor.apply(dto));
-		    if (empresaAssociada == null) {
-		        logger.warn("{} com SharePoint ID '{}' ignorado(a): empresa '{}' não encontrada.", entidadeNome,
-		                dto.getId(), empresaNomeExtractor.apply(dto));
-		        continue;
-		    }
-
-		    EntidadeCompostaId idAtual = idCreator.apply(dto, empresaAssociada);
-		    T_ENTITY entidade = entidadesExistentes.get(idAtual);
-
-		    if (entidade != null) {
-		        entidade.setEmpresa(empresaAssociada);
-		        entityUpdater.accept(entidade, dto);
-		    } else {
-		        entidade = entityCreator.apply(dto, empresaAssociada);
-		    }
-		    loteParaSalvar.add(entidade);
-
-		    // Verifica se o lote atingiu o tamanho máximo
-		    if (loteParaSalvar.size() == batchSizeSave) {
-		        repository.saveAll(loteParaSalvar);
-		        totalProcessado += loteParaSalvar.size();
-		        loteParaSalvar.clear(); // Limpa a lista para o próximo lote
-		        logger.info("... {} {} processados...", totalProcessado, entidadeNome);
-		    }
-		}
-
-		// Salva o lote final (caso o número total de itens não seja múltiplo do batchSizeSave)
+		// Salva o lote final (caso o número total de itens não seja múltiplo do
+		// batchSizeSave)
 		if (!loteParaSalvar.isEmpty()) {
-		    repository.saveAll(loteParaSalvar);
-		    totalProcessado += loteParaSalvar.size();
+			repository.saveAll(loteParaSalvar);
+			totalProcessado += loteParaSalvar.size();
 		}
 
-		logger.info("Sincronização de {} concluída. {} registros processados no total.", entidadeNome,
-		        totalProcessado);
+		logger.info("Sincronização de {} concluída. {} registros processados no total.", entidadeNome, totalProcessado);
+	}
+	// Dentro da classe SincronizacaoService
+
+	@Transactional
+	public void sincronizarOrdensDeServico() throws ExecutionException, InterruptedException {
+		logger.info("--- INICIANDO ROTINA DE SINCRONIZAÇÃO DE ORDENS DE SERVIÇO (OMIE) ---");
+		List<EmpresaEntity> empresas = empresaRepository.findAll();
+
+		for (EmpresaEntity empresa : empresas) {
+			logger.info("Processando Ordens de Serviço para a empresa: {}", empresa.getNomeFantasia());
+
+			int paginaAtual = 1;
+			int totalPaginas;
+			List<OrdemServicoEntity> loteParaSalvar = new ArrayList<>();
+
+			do {
+				// Delay antes de fazer a próxima chamada para respeitar o Rate Limit da API
+				// Não aplica o delay na primeira página
+				if (paginaAtual > 1) {
+					try {
+						long delayMs = 1000L; // 1 segundo de delay
+						logger.info("Aguardando {}ms antes de buscar a próxima página...", delayMs);
+						Thread.sleep(delayMs);
+					} catch (InterruptedException e) {
+						logger.error("A thread foi interrompida durante o delay de rate limiting.", e);
+						Thread.currentThread().interrupt(); // Restaura o status de interrupção
+						break; // Sai do loop se a thread for interrompida
+					}
+				}
+
+				OmieListarOsResponse resposta = omieApiService.listarOsPorPagina(empresa, paginaAtual).get();
+				totalPaginas = resposta.getTotalDePaginas();
+
+				if (resposta.getOrdensDeServico() == null || resposta.getOrdensDeServico().isEmpty()) {
+					logger.info("Nenhuma OS encontrada na página {} para a empresa {}. Fim da paginação.", paginaAtual,
+							empresa.getNomeFantasia());
+					break;
+				}
+
+				logger.info("Processando página {} de {} para a empresa '{}'. {} registros encontrados.", paginaAtual,
+						totalPaginas, empresa.getNomeFantasia(), resposta.getOrdensDeServico().size());
+
+				for (OrdemServicoDTO dto : resposta.getOrdensDeServico()) {
+					// Lógica de busca de dependências e criação/atualização da entidade...
+					ClienteEntity cliente = findCliente(dto.getCabecalho().getCodigoCliente(), empresa);
+					CategoriaEntity categoria = findCategoria(dto.getInformacoesAdicionais().getCodigoCategoria(),
+							empresa);
+					ContaCorrenteEntity contaCorrente = findContaCorrente(
+							dto.getInformacoesAdicionais().getCodigoContaCorrente(), empresa);
+					ProjetoEntity projeto = findProjeto(dto.getInformacoesAdicionais().getCodigoProjeto(), empresa);
+
+					if (cliente == null) {
+						logger.warn(
+								"Cliente com código OMIE {} não encontrado no banco de dados para a empresa {}. Pulando OS nº {}.",
+								dto.getCabecalho().getCodigoCliente(), empresa.getNomeFantasia(),
+								dto.getCabecalho().getNumeroOs());
+						continue;
+					}
+
+					OrdemServicoId osId = new OrdemServicoId(dto.getCabecalho().getCodigoOs(), empresa.getCodigo());
+					OrdemServicoEntity osEntity = ordemServicoRepository.findById(osId)
+							.orElse(new OrdemServicoEntity(dto, empresa, cliente, categoria, contaCorrente, projeto));
+
+					osEntity.atualizarDados(dto);
+
+					osEntity.setCliente(cliente);
+					osEntity.setCategoria(categoria);
+					osEntity.setContaCorrente(contaCorrente);
+					osEntity.setProjeto(projeto);
+
+					loteParaSalvar.add(osEntity);
+				}
+
+				if (!loteParaSalvar.isEmpty()) {
+					ordemServicoRepository.saveAll(loteParaSalvar);
+					loteParaSalvar.clear();
+				}
+
+				paginaAtual++;
+
+			} while (paginaAtual <= totalPaginas);
+
+			logger.info("Sincronização de Ordens de Serviço concluída para a empresa: {}", empresa.getNomeFantasia());
+		}
+		logger.info("--- FIM DA ROTINA DE SINCRONIZAÇÃO DE ORDENS DE SERVIÇO (OMIE) ---");
+	}
+
+	// O resto dos seus métodos auxiliares (findCliente, findCategoria, etc.)
+	// permanecem os mesmos
+//	@Transactional
+//	public void sincronizarOrdensDeServico() throws ExecutionException, InterruptedException {
+//		logger.info("--- INICIANDO ROTINA DE SINCRONIZAÇÃO DE ORDENS DE SERVIÇO (OMIE) ---");
+//		List<EmpresaEntity> empresas = empresaRepository.findAll();
+//
+//		for (EmpresaEntity empresa : empresas) {
+//			logger.info("Processando Ordens de Serviço para a empresa: {}", empresa.getNomeFantasia());
+//
+//			int paginaAtual = 1;
+//			int totalPaginas;
+//			List<OrdemServicoEntity> loteParaSalvar = new ArrayList<>();
+//
+//			do {
+//				OmieListarOsResponse resposta = omieApiService.listarOsPorPagina(empresa, paginaAtual).get();
+//				totalPaginas = resposta.getTotalDePaginas();
+//
+//				if (resposta.getOrdensDeServico() == null || resposta.getOrdensDeServico().isEmpty()) {
+//					logger.info("Nenhuma OS encontrada na página {} para a empresa {}.", paginaAtual,
+//							empresa.getNomeFantasia());
+//					break;
+//				}
+//
+//				for (OrdemServicoDTO dto : resposta.getOrdensDeServico()) {
+//					// 1. Buscar dependências (Cliente, Categoria, etc.)
+//					// PONTO DE ATENÇÃO: Assumindo que os códigos do OMIE correspondem aos códigos
+//					// do SharePoint
+//					ClienteEntity cliente = findCliente(dto.getCabecalho().getCodigoCliente(), empresa);
+//					CategoriaEntity categoria = findCategoria(dto.getInformacoesAdicionais().getCodigoCategoria(),
+//							empresa);
+//					ContaCorrenteEntity contaCorrente = findContaCorrente(
+//							dto.getInformacoesAdicionais().getCodigoContaCorrente(), empresa);
+//					ProjetoEntity projeto = findProjeto(dto.getInformacoesAdicionais().getCodigoProjeto(), empresa);
+//
+//					if (cliente == null) {
+//						logger.warn(
+//								"Cliente com código OMIE {} não encontrado no banco de dados para a empresa {}. Pulando OS nº {}.",
+//								dto.getCabecalho().getCodigoCliente(), empresa.getNomeFantasia(),
+//								dto.getCabecalho().getNumeroOs());
+//						continue; // Pula para a próxima OS
+//					}
+//
+//					// 2. Criar ou Atualizar a OrdemServicoEntity
+//					OrdemServicoId osId = new OrdemServicoId(dto.getCabecalho().getCodigoOs(), empresa.getCodigo());
+//					OrdemServicoEntity osEntity = ordemServicoRepository.findById(osId)
+//							.orElse(new OrdemServicoEntity(dto, empresa, cliente, categoria, contaCorrente, projeto));
+//
+//					osEntity.atualizarDados(dto);
+//
+//					// Adiciona as dependências que podem ter sido nulas na criação inicial
+//					osEntity.setCliente(cliente);
+//					osEntity.setCategoria(categoria);
+//					osEntity.setContaCorrente(contaCorrente);
+//					osEntity.setProjeto(projeto);
+//
+//					loteParaSalvar.add(osEntity);
+//				}
+//
+//				if (!loteParaSalvar.isEmpty()) {
+//					logger.info("Salvando lote de {} Ordens de Serviço da página {}...", loteParaSalvar.size(),
+//							paginaAtual);
+//					ordemServicoRepository.saveAll(loteParaSalvar);
+//					loteParaSalvar.clear();
+//				}
+//
+//				paginaAtual++;
+//
+//			} while (paginaAtual <= totalPaginas);
+//
+//			logger.info("Sincronização de Ordens de Serviço concluída para a empresa: {}", empresa.getNomeFantasia());
+//		}
+//		logger.info("--- FIM DA ROTINA DE SINCRONIZAÇÃO DE ORDENS DE SERVIÇO (OMIE) ---");
+//	}
+
+	// Métodos auxiliares para buscar as dependências com tratamento para valores
+	// nulos
+	private ClienteEntity findCliente(Long clienteCodigo, EmpresaEntity empresa) {
+		if (clienteCodigo == null)
+			return null;
+		return clienteRepository.findById(new EntidadeCompostaId(String.valueOf(clienteCodigo), empresa.getCodigo()))
+				.orElse(null);
+	}
+
+	private CategoriaEntity findCategoria(String categoriaCodigo, EmpresaEntity empresa) {
+		if (categoriaCodigo == null)
+			return null;
+		return categoriaRepository.findById(new EntidadeCompostaId(categoriaCodigo, empresa.getCodigo())).orElse(null);
+	}
+
+	private ContaCorrenteEntity findContaCorrente(Long ccCodigo, EmpresaEntity empresa) {
+		if (ccCodigo == null)
+			return null;
+		return contaCorrenteRepository.findById(new EntidadeCompostaId(String.valueOf(ccCodigo), empresa.getCodigo()))
+				.orElse(null);
+	}
+
+	private ProjetoEntity findProjeto(Long projetoCodigo, EmpresaEntity empresa) {
+		if (projetoCodigo == null)
+			return null;
+		return projetoRepository.findById(new EntidadeCompostaId(String.valueOf(projetoCodigo), empresa.getCodigo()))
+				.orElse(null);
 	}
 }
 
