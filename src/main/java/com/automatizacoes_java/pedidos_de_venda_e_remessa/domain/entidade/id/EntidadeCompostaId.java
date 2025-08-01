@@ -23,6 +23,6 @@ public class EntidadeCompostaId implements Serializable {
 	@Column(name = "codigo")
 	private String codigo;
 
-	@Column(name = "empresa_id")
-	private Long empresaId;
+	@Column(name = "empresa_codigo")
+	private Long empresaCodigo;
 }

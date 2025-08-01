@@ -35,7 +35,7 @@ public abstract class BaseComposedEntity<T_CODIGO> extends BaseEntity {
 	private String nome;
 
 	@ManyToOne(fetch = FetchType.EAGER)
-	@MapsId("empresaId") // Mapeia a parte 'empresaId' da nossa chave composta (@EmbeddedId)
+	@MapsId("empresaCodigo") // Mapeia a parte 'empresaId' da nossa chave composta (@EmbeddedId)
 	@JoinColumn(name = "empresa_codigo", referencedColumnName = "codigo")
 	private EmpresaEntity empresa;
 
