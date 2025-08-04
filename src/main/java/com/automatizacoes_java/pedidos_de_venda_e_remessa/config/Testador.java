@@ -33,9 +33,9 @@ public class Testador implements CommandLineRunner {
 		logger.info("--- FIM TESTE: Sincronização de dados do SharePoint ---");
 
 		// 2. Sincroniza as Ordens de Serviço do OMIE, que dependem dos dados acima
-//		logger.info("--- INICIANDO TESTE: Sincronização de Ordens de Serviço do OMIE ---");
-//		sincronizacaoService.sincronizarOrdensDeServico();
-//		logger.info("--- FIM TESTE: Sincronização de Ordens de Serviço do OMIE ---");
+		logger.info("--- INICIANDO TESTE: Sincronização de Ordens de Serviço do OMIE ---");
+		sincronizacaoService.sincronizarOrdensDeServico();
+		logger.info("--- FIM TESTE: Sincronização de Ordens de Serviço do OMIE ---");
 		
 		System.out.println(" ===== FIM ===== ");
 	}

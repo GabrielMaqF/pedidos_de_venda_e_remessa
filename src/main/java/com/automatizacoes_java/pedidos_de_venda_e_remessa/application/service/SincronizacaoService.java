@@ -37,6 +37,7 @@ import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.repository.Empr
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.repository.ProjetoRepository;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.repository.VendedorRepository;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.repository.relatorio.OrdemServicoRepository;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.repository.relatorio.ServicoPrestadoRepository;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.microsoft.sharepoint.dto.CategoriaDTO;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.microsoft.sharepoint.dto.ClienteDTO;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.microsoft.sharepoint.dto.ContaCorrenteDTO;
@@ -93,6 +94,8 @@ public class SincronizacaoService {
 	private VendedorRepository vendedorRepository;
 	@Autowired
 	private OrdemServicoRepository ordemServicoRepository;
+	@Autowired
+	private ServicoPrestadoRepository servicoPrestadoRepository;
 	@Autowired
 	private OmieApiClientService omieApiService;
 
@@ -310,29 +313,58 @@ public class SincronizacaoService {
 				logger.info("Processando página {} de {} para a empresa '{}'. {} registros encontrados.", paginaAtual,
 						totalPaginas, empresa.getNomeFantasia(), resposta.getOrdensDeServico().size());
 				List<OrdemServicoEntity> loteParaSalvar = new ArrayList<>();
+				// Dentro do método sincronizarOrdensDeServico, substitua o loop 'for' por este:
 
 				for (OrdemServicoDTO dto : resposta.getOrdensDeServico()) {
+					// --- 1. Validação do Cliente (já estava correto) ---
 					ClienteEntity cliente = findCliente(dto.getCabecalho().getCodigoCliente(), empresa);
 					if (cliente == null) {
-						logger.warn("Cliente com código OMIE {} não encontrado. Pulando OS nº {}.",
-								dto.getCabecalho().getCodigoCliente(), dto.getCabecalho().getNumeroOs());
+						logger.warn(
+								"OS nº {} IGNORADA: Cliente com código OMIE '{}' não encontrado para a empresa '{}'.",
+								dto.getCabecalho().getNumeroOs(), dto.getCabecalho().getCodigoCliente(),
+								empresa.getNomeFantasia());
 						continue;
 					}
 
-					CategoriaEntity categoria = findCategoria(dto.getInformacoesAdicionais().getCodigoCategoria(),
-							empresa);
-					ContaCorrenteEntity contaCorrente = findContaCorrente(
-							dto.getInformacoesAdicionais().getCodigoContaCorrente(), empresa);
-					ProjetoEntity projeto = findProjeto(dto.getInformacoesAdicionais().getCodigoProjeto(), empresa);
+					// --- 2. Validação das outras dependências (ADIÇÃO SUGERIDA) ---
+					String codigoCategoriaDTO = dto.getInformacoesAdicionais().getCodigoCategoria();
+					CategoriaEntity categoria = findCategoria(codigoCategoriaDTO, empresa);
+					if (codigoCategoriaDTO != null && !codigoCategoriaDTO.trim().isEmpty() && categoria == null) {
+						logger.warn(
+								"OS nº {}: Categoria com código OMIE '{}' não encontrada para a empresa '{}'. O campo ficará nulo.",
+								dto.getCabecalho().getNumeroOs(), codigoCategoriaDTO, empresa.getNomeFantasia());
+					}
 
+					Long codigoContaCorrenteDTO = dto.getInformacoesAdicionais().getCodigoContaCorrente();
+					ContaCorrenteEntity contaCorrente = findContaCorrente(codigoContaCorrenteDTO, empresa);
+					if (codigoContaCorrenteDTO != null && contaCorrente == null) {
+						logger.warn(
+								"OS nº {}: Conta Corrente com código OMIE '{}' não encontrada para a empresa '{}'. O campo ficará nulo.",
+								dto.getCabecalho().getNumeroOs(), codigoContaCorrenteDTO, empresa.getNomeFantasia());
+					}
+
+					Long codigoProjetoDTO = dto.getInformacoesAdicionais().getCodigoProjeto();
+					ProjetoEntity projeto = findProjeto(codigoProjetoDTO, empresa);
+					if (codigoProjetoDTO != null && projeto == null) {
+						logger.warn(
+								"OS nº {}: Projeto com código OMIE '{}' não encontrado para a empresa '{}'. O campo ficará nulo.",
+								dto.getCabecalho().getNumeroOs(), codigoProjetoDTO, empresa.getNomeFantasia());
+					}
+
+					// --- 3. Busca dos Departamentos (já estava correto) ---
 					List<DepartamentoEntity> departamentosAssociados = new ArrayList<>();
 					if (dto.getDepartamentos() != null) {
 						for (var deptoDto : dto.getDepartamentos()) {
-							findDepartamento(deptoDto.getCodigoDepartamento(), empresa)
-									.ifPresent(departamentosAssociados::add);
+							findDepartamento(deptoDto.getCodigoDepartamento(), empresa).ifPresentOrElse(
+									departamentosAssociados::add,
+									() -> logger.warn(
+											"OS nº {}: Departamento com código OMIE '{}' não encontrado para a empresa '{}'. Não será associado.",
+											dto.getCabecalho().getNumeroOs(), deptoDto.getCodigoDepartamento(),
+											empresa.getNomeFantasia()));
 						}
 					}
 
+					// --- 4. Criação/Atualização da Entidade (já estava correto) ---
 					OrdemServicoId osId = new OrdemServicoId(dto.getCabecalho().getCodigoOs(), empresa.getCodigo());
 					OrdemServicoEntity osEntity = ordemServicoRepository.findById(osId)
 							.orElseGet(OrdemServicoEntity::new);

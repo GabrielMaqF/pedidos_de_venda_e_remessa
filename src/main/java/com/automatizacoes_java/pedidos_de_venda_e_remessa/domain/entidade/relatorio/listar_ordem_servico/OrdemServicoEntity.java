@@ -147,10 +147,10 @@ public class OrdemServicoEntity {
 			this.contato = info.getContato();
 		});
 
-		atualizarEmail(dto.getEmail());
-		atualizarServicos(dto.getServicosPrestados());
-		atualizarParcelas(dto.getParcelas());
-		atualizarDepartamentos(dto.getDepartamentos(), departamentos);
+//		atualizarEmail(dto.getEmail());
+//		atualizarServicos(dto.getServicosPrestados());
+//		atualizarParcelas(dto.getParcelas());
+//		atualizarDepartamentos(dto.getDepartamentos(), departamentos);
 	}
 
 	private void atualizarEmail(
