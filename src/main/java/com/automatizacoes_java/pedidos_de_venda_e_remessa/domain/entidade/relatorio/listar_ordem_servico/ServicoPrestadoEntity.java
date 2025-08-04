@@ -30,12 +30,16 @@ public class ServicoPrestadoEntity {
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumns({
-		@JoinColumn(name = "ordem_servico_id", referencedColumnName = "id", insertable = false, updatable = false),
-		@JoinColumn(name = "ordem_servico_empresa_codigo", referencedColumnName = "empresa_codigo", insertable = false, updatable = false)
-	})private OrdemServicoEntity ordemServico;
+			@JoinColumn(name = "ordem_servico_id", referencedColumnName = "id", insertable = false, updatable = false),
+			@JoinColumn(name = "ordem_servico_empresa_codigo", referencedColumnName = "empresa_codigo", insertable = false, updatable = false) })
+	private OrdemServicoEntity ordemServico;
 
-	private Long idItemOmie; // Mantemos o nIdItem original para referência
+	private Long idItemOmie;
 	private Long codigoServico;
+
+	@Column(name = "codigo_servico_lc116")
+	private String codigoServicoLC116;
+
 	@Column(columnDefinition = "TEXT")
 	private String descricao;
 	private BigDecimal quantidade;
@@ -55,6 +59,7 @@ public class ServicoPrestadoEntity {
 	public void atualizarDados(ServicoPrestadoDTO dto) {
 		this.idItemOmie = dto.getIdItem();
 		this.codigoServico = dto.getCodigoServico();
+		this.codigoServicoLC116 = dto.getCodigoServicoLC116();
 		this.descricao = dto.getDescricao();
 		this.quantidade = dto.getQuantidade();
 		this.valorUnitario = dto.getValorUnitario();
