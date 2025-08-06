@@ -1,10 +1,10 @@
-package com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.repository.relatorio;
+package com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.repository.listar_ordem_servico;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.id.ServicoPrestadoId;
-import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.relatorio.listar_ordem_servico.ServicoPrestadoEntity;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.listar_ordem_servico.ServicoPrestadoEntity;
 
 @Repository
 public interface ServicoPrestadoRepository extends JpaRepository<ServicoPrestadoEntity, ServicoPrestadoId> {

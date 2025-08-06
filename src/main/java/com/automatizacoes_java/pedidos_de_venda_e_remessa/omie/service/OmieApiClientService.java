@@ -2,6 +2,7 @@ package com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.service;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 
 import org.slf4j.Logger;
@@ -16,6 +17,7 @@ import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.request.ListarOsP
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.request.OmieRequestPayload;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.response.OmieFaultResponse;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.response.OmieListarOsResponse;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.response.OmieListarServicosResponse;
 
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -68,6 +70,52 @@ public class OmieApiClientService {
 				});
 	}
 
+	public CompletableFuture<OmieListarServicosResponse> listarServicosPorPagina(EmpresaEntity empresa, int pagina) {
+		logger.debug("Buscando página {} de Serviços Cadastrados para a empresa: {}", pagina,
+				empresa.getNomeFantasia());
+
+		var params = Map.of("nPagina", pagina, "nRegPorPagina", 1000); // Usando um Map simples para os parâmetros
+		var payload = new OmieRequestPayload<>("ListarCadastroServico", empresa.getAppKey(), empresa.getAppSecret(),
+				List.of(params));
+
+		return webClient.post().uri("/servicos/servico/").bodyValue(payload).retrieve()
+				.bodyToMono(OmieListarServicosResponse.class)
+				// --- BLOCO DE TRATAMENTO DE ERRO ADICIONADO ---
+				.onErrorResume(WebClientResponseException.class, ex -> {
+					OmieFaultResponse fault = ex.getResponseBodyAs(OmieFaultResponse.class);
+					if (fault != null && "SOAP-ENV:Client-5113".equals(fault.getFaultcode())) {
+						logger.info(
+								"API OMIE informou que não há Serviços Cadastrados na página {} para a empresa '{}'.",
+								pagina, empresa.getNomeFantasia());
+						// Retorna uma resposta vazia, que é um cenário esperado e não um erro.
+						return Mono.just(createEmptyServicosResponse(pagina));
+					}
+					// Para todos os outros erros, propaga a exceção.
+					return Mono.error(ex);
+				})
+				// --- FIM DO BLOCO ---
+				.toFuture().exceptionally(ex -> {
+					logger.error("Erro final ao consultar Serviços Cadastrados no OMIE para a empresa '{}', página {}",
+							empresa.getNomeFantasia(), pagina, ex);
+					throw new RuntimeException("Erro ao consultar Serviços Cadastrados no OMIE.", ex);
+				});
+	}
+//	public CompletableFuture<OmieListarServicosResponse> listarServicosPorPagina(EmpresaEntity empresa, int pagina) {
+//	    logger.debug("Buscando página {} de Serviços Cadastrados para a empresa: {}", pagina, empresa.getNomeFantasia());
+//
+//	    var params = Map.of("nPagina", pagina, "nRegPorPagina", 20);
+//	    var payload = new OmieRequestPayload<>("ListarCadastroServico", empresa.getAppKey(), empresa.getAppSecret(),
+//	            List.of(params));
+//
+//	    return webClient.post().uri("/servicos/servico/").bodyValue(payload).retrieve()
+//	            .bodyToMono(OmieListarServicosResponse.class).toFuture()
+//	            .exceptionally(ex -> {
+//	                logger.error("Erro ao consultar Serviços Cadastrados no OMIE para a empresa '{}', página {}",
+//	                        empresa.getNomeFantasia(), pagina, ex);
+//	                throw new RuntimeException("Erro ao consultar Serviços Cadastrados no OMIE.", ex);
+//	            });
+//	}
+
 	private OmieListarOsResponse createEmptyResponse(int pagina) {
 		OmieListarOsResponse emptyResponse = new OmieListarOsResponse();
 		emptyResponse.setPagina(pagina);
@@ -75,6 +123,14 @@ public class OmieApiClientService {
 		emptyResponse.setTotalDeRegistros(0);
 		emptyResponse.setRegistrosPorPagina(0);
 		emptyResponse.setOrdensDeServico(Collections.emptyList());
+		return emptyResponse;
+	}
+
+	private OmieListarServicosResponse createEmptyServicosResponse(int pagina) {
+		OmieListarServicosResponse emptyResponse = new OmieListarServicosResponse();
+		emptyResponse.setPagina(pagina);
+		emptyResponse.setTotalDePaginas(pagina - 1); // Garante que o loop de paginação pare
+		emptyResponse.setServicos(Collections.emptyList());
 		return emptyResponse;
 	}
 }

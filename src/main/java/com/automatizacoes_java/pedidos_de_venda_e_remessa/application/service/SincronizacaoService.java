@@ -29,8 +29,9 @@ import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.base.B
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.id.EntidadeCompostaId;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.id.OrdemServicoId;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.id.ServicoPrestadoId;
-import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.relatorio.listar_ordem_servico.OrdemServicoEntity;
-import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.relatorio.listar_ordem_servico.ServicoPrestadoEntity;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.listar_ordem_servico.OrdemServicoEntity;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.listar_ordem_servico.ServicoPrestadoEntity;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.listar_servico_cadastrado.ServicoCadastroEntity;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.repository.CategoriaRepository;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.repository.ClienteRepository;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.repository.ContaCorrenteRepository;
@@ -38,8 +39,9 @@ import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.repository.Depa
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.repository.EmpresaRepository;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.repository.ProjetoRepository;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.repository.VendedorRepository;
-import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.repository.relatorio.OrdemServicoRepository;
-import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.repository.relatorio.ServicoPrestadoRepository;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.repository.listar_ordem_servico.OrdemServicoRepository;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.repository.listar_ordem_servico.ServicoPrestadoRepository;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.repository.listar_servico_cadastrado.ServicoCadastroRepository;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.microsoft.sharepoint.dto.CategoriaDTO;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.microsoft.sharepoint.dto.ClienteDTO;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.microsoft.sharepoint.dto.ContaCorrenteDTO;
@@ -58,7 +60,9 @@ import com.automatizacoes_java.pedidos_de_venda_e_remessa.microsoft.sharepoint.s
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.microsoft.sharepoint.service.VendedorSharepointService;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.dto.listar_ordem_servico.OrdemServicoDTO;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.dto.listar_ordem_servico.ServicoPrestadoDTO;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.dto.listar_servicos_cadastrados.ServicoCadastroDTO;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.response.OmieListarOsResponse;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.response.OmieListarServicosResponse;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.service.OmieApiClientService;
 
 @Service
@@ -101,6 +105,8 @@ public class SincronizacaoService {
 	private ServicoPrestadoRepository servicoPrestadoRepository;
 	@Autowired
 	private OmieApiClientService omieApiService;
+	@Autowired
+	private ServicoCadastroRepository servicoCadastroRepository;
 
 	// ---------------------------- SHAREPOINT ------------------------------
 	public void sincronizarTudo() {
@@ -113,6 +119,7 @@ public class SincronizacaoService {
 			sincronizarContaCorrente();
 			sincronizarVendedor();
 			sincronizarClientes();
+			sincronizarServicosCadastrados();
 			logger.info("--- ROTINA DE SINCRONIZAÇÃO COMPLETA CONCLUÍDA COM SUCESSO ---");
 		} catch (Exception e) {
 			logger.error("!!! ERRO CRÍTICO DURANTE A SINCRONIZAÇÃO !!!", e);
@@ -415,6 +422,41 @@ public class SincronizacaoService {
 		// Remove da coleção da entidade os itens que não vieram mais no DTO (se
 		// necessário)
 		osEntity.getServicos().removeIf(item -> !idsProcessados.contains(item.getId()));
+	}
+
+	@Transactional
+	public void sincronizarServicosCadastrados() throws ExecutionException, InterruptedException {
+		logger.info("--- Sincronizando Serviços Cadastrados (OMIE) ---");
+		List<EmpresaEntity> empresas = empresaRepository.findAll();
+
+		for (EmpresaEntity empresa : empresas) {
+			int paginaAtual = 1;
+			int totalPaginas;
+			do {
+				OmieListarServicosResponse resposta = omieApiService.listarServicosPorPagina(empresa, paginaAtual)
+						.get();
+				if (resposta == null || resposta.getServicos() == null || resposta.getServicos().isEmpty()) {
+					break;
+				}
+				totalPaginas = resposta.getTotalDePaginas();
+
+				List<ServicoCadastroEntity> loteParaSalvar = new ArrayList<>();
+				for (ServicoCadastroDTO dto : resposta.getServicos()) {
+					if (dto.getIntListar() == null || dto.getIntListar().getCodigoServico() == null)
+						continue;
+
+					EntidadeCompostaId id = new EntidadeCompostaId(
+							String.valueOf(dto.getIntListar().getCodigoServico()), empresa.getCodigo());
+					ServicoCadastroEntity entidade = servicoCadastroRepository.findById(id)
+							.orElseGet(() -> new ServicoCadastroEntity(dto, empresa));
+					entidade.atualizarDados(dto);
+					loteParaSalvar.add(entidade);
+				}
+				servicoCadastroRepository.saveAll(loteParaSalvar);
+				paginaAtual++;
+			} while (paginaAtual <= totalPaginas);
+		}
+		logger.info("--- Sincronização de Serviços Cadastrados concluída ---");
 	}
 
 	// Métodos auxiliares para buscar dependências (findCliente, findCategoria,

@@ -1,0 +1,11 @@
+package com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.repository.listar_servico_cadastrado;
+
+import org.springframework.stereotype.Repository;
+
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.id.EntidadeCompostaId;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.listar_servico_cadastrado.ServicoCadastroEntity;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.repository.BaseRepository;
+
+@Repository
+public interface ServicoCadastroRepository extends BaseRepository<ServicoCadastroEntity, EntidadeCompostaId, Long> {
+}
