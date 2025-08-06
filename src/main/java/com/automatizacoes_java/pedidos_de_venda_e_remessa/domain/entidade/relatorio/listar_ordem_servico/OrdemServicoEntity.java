@@ -18,6 +18,7 @@ import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.Empres
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.ProjetoEntity;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.id.OrdemServicoId;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.dto.listar_ordem_servico.DepartamentoOsDTO;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.dto.listar_ordem_servico.EmailDTO;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.dto.listar_ordem_servico.OrdemServicoDTO;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.dto.listar_ordem_servico.ParcelaDTO;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.util.DateUtil;
@@ -89,10 +90,12 @@ public class OrdemServicoEntity {
 	private boolean faturada;
 	private String numeroContrato;
 	private String cidadePrestacaoServico;
+	private String contato;
 	@Column(columnDefinition = "TEXT")
 	private String dadosAdicionaisNF;
-	private String contato;
-
+	@Column(columnDefinition = "TEXT")
+	private String observacoesOs;
+	
 	@OneToOne(mappedBy = "ordemServico", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	private OrdemServicoEmailEntity email;
 
@@ -145,7 +148,11 @@ public class OrdemServicoEntity {
 			this.dadosAdicionaisNF = info.getDadosAdicionaisNF();
 			this.contato = info.getContato();
 		});
-
+		
+		Optional.ofNullable(dto.getObservacoes()).ifPresent(obs -> {
+			this.observacoesOs = obs.getObservacao();
+		});
+		
 		// RESTAURANDO A LÓGICA ANTERIOR AQUI
 		atualizarEmail(dto.getEmail());
 		atualizarParcelas(dto.getParcelas());
@@ -153,7 +160,7 @@ public class OrdemServicoEntity {
 	}
 
 	public void atualizarEmail(
-			com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.dto.listar_ordem_servico.EmailDTO emailDto) {
+				EmailDTO emailDto) {
 		if (emailDto != null) {
 			if (this.email == null) {
 				this.email = new OrdemServicoEmailEntity(emailDto, this);

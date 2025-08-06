@@ -30,6 +30,9 @@ public class OrdemServicoDTO {
 	@JsonProperty("InformacoesAdicionais")
 	private InformacoesAdicionaisDTO informacoesAdicionais;
 
+	@JsonProperty("Observacoes")
+	private ObservacoesDTO observacoes;
+	
 	@JsonProperty("Parcelas")
 	private List<ParcelaDTO> parcelas;
 
