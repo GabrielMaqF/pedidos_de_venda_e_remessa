@@ -1,11 +1,15 @@
 package com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.dto.listar_servicos_cadastrados;
 
+import java.math.BigDecimal;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
+@Getter
+@Setter
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class CabecalhoServicoDTO {
 	@JsonProperty("cDescricao")
@@ -13,4 +17,7 @@ public class CabecalhoServicoDTO {
 
 	@JsonProperty("cCodigo")
 	private String codigo;
+
+	@JsonProperty("nPrecoUnit")
+	private BigDecimal valorServico;
 }

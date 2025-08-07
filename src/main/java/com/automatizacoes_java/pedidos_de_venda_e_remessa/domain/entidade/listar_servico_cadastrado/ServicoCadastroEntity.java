@@ -1,5 +1,7 @@
 package com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.listar_servico_cadastrado;
 
+import java.math.BigDecimal;
+
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.EmpresaEntity;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.base.BaseComposedEntity;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.id.EntidadeCompostaId;
@@ -19,6 +21,7 @@ import lombok.Setter;
 public class ServicoCadastroEntity extends BaseComposedEntity<Long> {
 
 	private String cCodigo; // cCodigo
+	private BigDecimal valorServico;
 
 	public ServicoCadastroEntity(ServicoCadastroDTO dto, EmpresaEntity empresa) {
 		this.setId(new EntidadeCompostaId(String.valueOf(dto.getIntListar().getCodigoServico()), empresa.getCodigo()));
@@ -30,6 +33,7 @@ public class ServicoCadastroEntity extends BaseComposedEntity<Long> {
 		if (dto.getCabecalho() != null) {
 			this.setNome(dto.getCabecalho().getDescricao());
 			this.cCodigo = dto.getCabecalho().getCodigo();
+			this.valorServico = dto.getCabecalho().getValorServico();
 		}
 	}
 }
