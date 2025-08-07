@@ -16,8 +16,11 @@ import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.config.OmieProper
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.request.ListarOsParamsDTO;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.request.OmieRequestPayload;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.response.OmieFaultResponse;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.response.OmieListarCnaeResponse;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.response.OmieListarContratosServicoResponse;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.response.OmieListarOsResponse;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.response.OmieListarServicosResponse;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.response.OmieListarTiposFaturamentoResponse;
 
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -100,21 +103,59 @@ public class OmieApiClientService {
 					throw new RuntimeException("Erro ao consultar Serviços Cadastrados no OMIE.", ex);
 				});
 	}
-//	public CompletableFuture<OmieListarServicosResponse> listarServicosPorPagina(EmpresaEntity empresa, int pagina) {
-//	    logger.debug("Buscando página {} de Serviços Cadastrados para a empresa: {}", pagina, empresa.getNomeFantasia());
-//
-//	    var params = Map.of("nPagina", pagina, "nRegPorPagina", 20);
-//	    var payload = new OmieRequestPayload<>("ListarCadastroServico", empresa.getAppKey(), empresa.getAppSecret(),
-//	            List.of(params));
-//
-//	    return webClient.post().uri("/servicos/servico/").bodyValue(payload).retrieve()
-//	            .bodyToMono(OmieListarServicosResponse.class).toFuture()
-//	            .exceptionally(ex -> {
-//	                logger.error("Erro ao consultar Serviços Cadastrados no OMIE para a empresa '{}', página {}",
-//	                        empresa.getNomeFantasia(), pagina, ex);
-//	                throw new RuntimeException("Erro ao consultar Serviços Cadastrados no OMIE.", ex);
-//	            });
-//	}
+
+	// Adicione este novo método à classe
+	public CompletableFuture<OmieListarContratosServicoResponse> listarContratosPorPagina(EmpresaEntity empresa,
+			int pagina) {
+		logger.debug("Buscando página {} de Contratos para a empresa: {}", pagina, empresa.getNomeFantasia());
+		var params = Map.of("pagina", pagina, "registros_por_pagina", 1000, "apenas_importado_api", "N");
+		var payload = new OmieRequestPayload<>("ListarContratos", empresa.getAppKey(), empresa.getAppSecret(),
+				List.of(params));
+
+		return webClient.post().uri("/servicos/contrato/").bodyValue(payload).retrieve()
+				.bodyToMono(OmieListarContratosServicoResponse.class)
+				.onErrorResume(WebClientResponseException.class, ex -> {
+					OmieFaultResponse fault = ex.getResponseBodyAs(OmieFaultResponse.class);
+					if (fault != null && "SOAP-ENV:Client-5113".equals(fault.getFaultcode())) {
+						logger.info("API OMIE informou que não há Contratos na página {} para a empresa '{}'.", pagina,
+								empresa.getNomeFantasia());
+						return Mono.just(new OmieListarContratosServicoResponse()); // Retorna objeto vazio
+					}
+					return Mono.error(ex);
+				}).toFuture().exceptionally(ex -> {
+					logger.error("Erro final ao consultar Contratos no OMIE para a empresa '{}', página {}",
+							empresa.getNomeFantasia(), pagina, ex);
+					throw new RuntimeException("Erro ao consultar Contratos no OMIE.", ex);
+				});
+	}
+
+	public CompletableFuture<OmieListarTiposFaturamentoResponse> listarTiposFaturamento(EmpresaEntity empresa) {
+		logger.debug("Buscando Tipos de Faturamento de Contrato para a empresa: {}", empresa.getNomeFantasia());
+		var params = Map.of("pagina", 1, "registros_por_pagina", 100); // Geralmente são poucos registros
+		var payload = new OmieRequestPayload<>("ListarTipoFatContrato", empresa.getAppKey(), empresa.getAppSecret(),
+				List.of(params));
+
+		return webClient.post().uri("/servicos/contratotpfat/").bodyValue(payload).retrieve()
+				.bodyToMono(OmieListarTiposFaturamentoResponse.class).toFuture().exceptionally(ex -> {
+					logger.error("Erro ao consultar Tipos de Faturamento no OMIE para a empresa '{}'",
+							empresa.getNomeFantasia(), ex);
+					throw new RuntimeException("Erro ao consultar Tipos de Faturamento no OMIE.", ex);
+				});
+	}
+
+	public CompletableFuture<OmieListarCnaeResponse> listarCnaePorPagina(EmpresaEntity empresa, int pagina) {
+		logger.debug("Buscando página {} de CNAE para a empresa: {}", pagina, empresa.getNomeFantasia());
+		var params = Map.of("pagina", pagina, "registros_por_pagina", 1000);
+		var payload = new OmieRequestPayload<>("ListarCNAE", empresa.getAppKey(), empresa.getAppSecret(),
+				List.of(params));
+
+		return webClient.post().uri("/produtos/cnae/").bodyValue(payload).retrieve()
+				.bodyToMono(OmieListarCnaeResponse.class).toFuture().exceptionally(ex -> {
+					logger.error("Erro ao consultar CNAE no OMIE para a empresa '{}', página {}",
+							empresa.getNomeFantasia(), pagina, ex);
+					throw new RuntimeException("Erro ao consultar CNAE no OMIE.", ex);
+				});
+	}
 
 	private OmieListarOsResponse createEmptyResponse(int pagina) {
 		OmieListarOsResponse emptyResponse = new OmieListarOsResponse();

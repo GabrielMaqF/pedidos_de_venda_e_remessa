@@ -24,6 +24,9 @@ public class CabecalhoDTO {
 	@JsonProperty("nCodCli")
 	private Long codigoCliente;
 
+	@JsonProperty("nCodVend")
+	private Long codigoVendedor;
+
 	@JsonProperty("dDtPrevisao")
 	private String dataPrevisao;
 
@@ -32,8 +35,6 @@ public class CabecalhoDTO {
 
 	@JsonProperty("cEtapa")
 	private String etapa;
-
-	// --- CAMPOS ADICIONADOS ---
 
 	@JsonProperty("cCodIntOS")
 	private String codigoIntegracaoOs;

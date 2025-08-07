@@ -16,6 +16,7 @@ import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.ContaC
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.DepartamentoEntity;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.EmpresaEntity;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.ProjetoEntity;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.VendedorEntity;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.id.OrdemServicoId;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.dto.listar_ordem_servico.DepartamentoOsDTO;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.dto.listar_ordem_servico.EmailDTO;
@@ -74,6 +75,13 @@ public class OrdemServicoEntity {
 			@JoinColumn(name = "projeto_empresa_codigo", referencedColumnName = "empresa_codigo") })
 	private ProjetoEntity projeto;
 
+	@ManyToOne(fetch = FetchType.LAZY)
+	 @JoinColumns({
+	        @JoinColumn(name = "vendedor_codigo", referencedColumnName = "codigo"),
+	        @JoinColumn(name = "vendedor_empresa_codigo", referencedColumnName = "empresa_codigo")
+	    })
+	private VendedorEntity vendedor;
+	
 	private String numeroOs;
 	private String etapa;
 	private LocalDate dataPrevisao;
@@ -110,7 +118,7 @@ public class OrdemServicoEntity {
 
 	public void atualizarDados(OrdemServicoDTO dto, EmpresaEntity empresa, ClienteEntity cliente,
 			CategoriaEntity categoria, ContaCorrenteEntity contaCorrente, ProjetoEntity projeto,
-			List<DepartamentoEntity> departamentos) {
+			List<DepartamentoEntity> departamentos, VendedorEntity vendedor) {
 
 		if (this.id == null) {
 			this.id = new OrdemServicoId(dto.getCabecalho().getCodigoOs(), empresa.getCodigo());
@@ -121,6 +129,7 @@ public class OrdemServicoEntity {
 		this.categoria = categoria;
 		this.contaCorrente = contaCorrente;
 		this.projeto = projeto;
+		this.vendedor = vendedor;
 
 		Optional.ofNullable(dto.getCabecalho()).ifPresent(cabecalho -> {
 			this.numeroOs = cabecalho.getNumeroOs();

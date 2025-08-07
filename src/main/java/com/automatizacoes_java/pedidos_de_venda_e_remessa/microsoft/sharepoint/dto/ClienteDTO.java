@@ -42,6 +42,9 @@ public class ClienteDTO extends SharePointItemBaseDTO {
 
 	@JsonProperty("bairro")
 	private String bairro;
+	
+	@JsonProperty("telefone1_numero")
+	private String telefone;
 
 	private boolean inativo;
 

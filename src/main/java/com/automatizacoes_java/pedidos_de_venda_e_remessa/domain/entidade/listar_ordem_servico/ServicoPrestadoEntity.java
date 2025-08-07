@@ -34,6 +34,8 @@ public class ServicoPrestadoEntity {
 			@JoinColumn(name = "ordem_servico_empresa_codigo", referencedColumnName = "empresa_codigo", insertable = false, updatable = false) })
 	private OrdemServicoEntity ordemServico;
 
+	private String codigoCnae;
+	
 	private Long idItemOmie;
 	private Long codigoServico;
 
@@ -60,6 +62,7 @@ public class ServicoPrestadoEntity {
 		this.idItemOmie = dto.getIdItem();
 		this.codigoServico = dto.getCodigoServico();
 		this.codigoServicoLC116 = dto.getCodigoServicoLC116();
+		this.codigoCnae = dto.getCodigoCnae();
 		this.descricao = dto.getDescricao();
 		this.quantidade = dto.getQuantidade();
 		this.valorUnitario = dto.getValorUnitario();

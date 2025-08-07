@@ -25,7 +25,7 @@ import lombok.ToString;
 public class ClienteEntity extends BaseComposedEntity<Long> implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	private String codigoIntegracao, nomeFantasia, cnpj, cidade, bairro, estado, cep;
+	private String codigoIntegracao, nomeFantasia, cnpj, cidade, bairro, estado, cep, telefone;
 
 	public ClienteEntity(ClienteDTO dto, EmpresaEntity e) {
 		this.setSharepointId(dto.getId());
@@ -47,6 +47,8 @@ public class ClienteEntity extends BaseComposedEntity<Long> implements Serializa
 		this.bairro = dto.getBairro();
 		this.estado = dto.getEstado();
 		this.cep = dto.getCep();
+		
+		this.telefone = dto.getTelefone();
 
 		this.setInativo(dto.isInativo());
 	}

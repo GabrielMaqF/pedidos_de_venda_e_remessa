@@ -41,8 +41,16 @@ public class ServicoPrestadoDTO {
 	@JsonProperty("cCodServLC116")
 	private String codigoServicoLC116;
 
+	private String codigoCnae;
+	
 	@JsonProperty("cCodServMun")
-	private String codigoServicoMunicipal;
+	public void setCodigoCnae(String codigoServicoMunicipalStr) {
+		if(codigoServicoMunicipalStr.contains("/")) {
+			this.codigoCnae = codigoServicoMunicipalStr.split("/")[0];
+		}else {			
+			this.codigoCnae = codigoServicoMunicipalStr;
+		}
+	}
 
 	@JsonProperty("cTpDesconto")
 	private String tipoDesconto;
