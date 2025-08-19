@@ -18,6 +18,7 @@ import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.Empres
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.ProjetoEntity;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.VendedorEntity;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.id.OrdemServicoId;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.listar_nfse.NotaFiscalServicoEntity;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.dto.listar_ordem_servico.DepartamentoOsDTO;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.dto.listar_ordem_servico.EmailDTO;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.dto.listar_ordem_servico.OrdemServicoDTO;
@@ -76,12 +77,21 @@ public class OrdemServicoEntity {
 	private ProjetoEntity projeto;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	 @JoinColumns({
-	        @JoinColumn(name = "vendedor_codigo", referencedColumnName = "codigo"),
-	        @JoinColumn(name = "vendedor_empresa_codigo", referencedColumnName = "empresa_codigo")
-	    })
+	@JoinColumns({ @JoinColumn(name = "vendedor_codigo", referencedColumnName = "codigo"),
+			@JoinColumn(name = "vendedor_empresa_codigo", referencedColumnName = "empresa_codigo") })
 	private VendedorEntity vendedor;
-	
+
+//	@OneToOne(fetch = FetchType.LAZY)
+//	@JoinColumns({ @JoinColumn(name = "nota_fiscal_servico_codigo", referencedColumnName = "codigo"),
+//			@JoinColumn(name = "nota_fiscal_servico_empresa_codigo", referencedColumnName = "empresa_codigo") })
+//	private NotaFiscalServicoEntity notaFiscalServico;
+
+    // --- SUBSTITUA O @OneToOne pelo @OneToMany ---
+    @OneToMany(mappedBy = "ordemServico", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private List<NotaFiscalServicoEntity> notasFiscais = new ArrayList<>();
+    // --- FIM DA ALTERAÇÃO ---
+    
+    private String origem;
 	private String numeroOs;
 	private String etapa;
 	private LocalDate dataPrevisao;
@@ -103,7 +113,7 @@ public class OrdemServicoEntity {
 	private String dadosAdicionaisNF;
 	@Column(columnDefinition = "TEXT")
 	private String observacoesOs;
-	
+
 	@OneToOne(mappedBy = "ordemServico", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	private OrdemServicoEmailEntity email;
 
@@ -149,6 +159,7 @@ public class OrdemServicoEntity {
 			this.dataCancelamento = DateUtil.parseLocalDateTime(info.getDataCancelamento(), info.getHoraCancelamento());
 			this.cancelada = info.isCancelada();
 			this.faturada = info.isFaturada();
+			this.origem = info.getOrigem();
 		});
 
 		Optional.ofNullable(dto.getInformacoesAdicionais()).ifPresent(info -> {
@@ -157,19 +168,18 @@ public class OrdemServicoEntity {
 			this.dadosAdicionaisNF = info.getDadosAdicionaisNF();
 			this.contato = info.getContato();
 		});
-		
+
 		Optional.ofNullable(dto.getObservacoes()).ifPresent(obs -> {
 			this.observacoesOs = obs.getObservacao();
 		});
-		
+
 		// RESTAURANDO A LÓGICA ANTERIOR AQUI
 		atualizarEmail(dto.getEmail());
 		atualizarParcelas(dto.getParcelas());
 		atualizarDepartamentos(dto.getDepartamentos(), departamentos);
 	}
 
-	public void atualizarEmail(
-				EmailDTO emailDto) {
+	public void atualizarEmail(EmailDTO emailDto) {
 		if (emailDto != null) {
 			if (this.email == null) {
 				this.email = new OrdemServicoEmailEntity(emailDto, this);

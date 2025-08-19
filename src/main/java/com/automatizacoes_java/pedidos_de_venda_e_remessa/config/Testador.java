@@ -31,8 +31,8 @@ public class Testador implements CommandLineRunner {
 //		sincronizacaoService.sincronizarContratosServico();
 		testarTudo();
 	}
-	
-	private void testarTudo() throws Exception{
+
+	private void testarTudo() throws Exception {
 
 		// 1. Sincroniza os dados base do SharePoint (Empresas, Clientes, etc.)
 		logger.info("--- INICIANDO TESTE: Sincronização de dados do SharePoint ---");
@@ -43,8 +43,10 @@ public class Testador implements CommandLineRunner {
 		logger.info("--- INICIANDO TESTE: Sincronização de Ordens de Serviço do OMIE ---");
 		sincronizacaoService.sincronizarOrdensDeServico();
 		logger.info("--- FIM TESTE: Sincronização de Ordens de Serviço do OMIE ---");
-		
+
+		sincronizacaoService.sincronizarNotasFiscais();
+
 		System.out.println(" ===== FIM ===== ");
 	}
-	
+
 }

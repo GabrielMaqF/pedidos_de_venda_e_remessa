@@ -31,6 +31,7 @@ import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.id.Ord
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.id.ServicoPrestadoId;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.listar_cnae.CnaeEntity;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.listar_contrato_servico.ContratoServicoEntity;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.listar_nfse.NotaFiscalServicoEntity;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.listar_ordem_servico.OrdemServicoEntity;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.listar_ordem_servico.ServicoPrestadoEntity;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.listar_servico_cadastrado.ServicoCadastroEntity;
@@ -44,6 +45,7 @@ import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.repository.Proj
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.repository.VendedorRepository;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.repository.listar_cnae.CnaeRepository;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.repository.listar_contrato_servico.ContratoServicoRepository;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.repository.listar_nfse.NotaFiscalServicoRepository;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.repository.listar_ordem_servico.OrdemServicoRepository;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.repository.listar_ordem_servico.ServicoPrestadoRepository;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.repository.listar_servico_cadastrado.ServicoCadastroRepository;
@@ -65,11 +67,13 @@ import com.automatizacoes_java.pedidos_de_venda_e_remessa.microsoft.sharepoint.s
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.microsoft.sharepoint.service.ProjetoSharepointService;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.microsoft.sharepoint.service.VendedorSharepointService;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.dto.listar_contrato_servico.ContratoServicoCadastroDTO;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.dto.listar_nfse.NfseDTO;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.dto.listar_ordem_servico.OrdemServicoDTO;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.dto.listar_ordem_servico.ServicoPrestadoDTO;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.dto.listar_servicos_cadastrados.ServicoCadastroDTO;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.response.OmieListarCnaeResponse;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.response.OmieListarContratosServicoResponse;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.response.OmieListarNfseResponse;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.response.OmieListarOsResponse;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.response.OmieListarServicosResponse;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.response.OmieListarTiposFaturamentoResponse;
@@ -123,6 +127,8 @@ public class SincronizacaoService {
 	private TipoFaturamentoContratoRepository tipoFaturamentoRepository;
 	@Autowired
 	private CnaeRepository cnaeRepository;
+	@Autowired
+	private NotaFiscalServicoRepository notaFiscalServicoRepository;
 
 	// ---------------------------- SHAREPOINT ------------------------------
 	public void sincronizarTudo() {
@@ -310,6 +316,60 @@ public class SincronizacaoService {
 	}
 
 	// ---------------------------- OMIE ------------------------------
+	@Transactional
+	public void sincronizarNotasFiscais() {
+		logger.info("--- Sincronizando Notas Fiscais (OMIE) ---");
+		List<EmpresaEntity> empresas = empresaRepository.findAll();
+
+		for (EmpresaEntity empresa : empresas) {
+			try {
+				logger.info("Processando Notas Fiscais para a empresa: {}", empresa.getNomeFantasia());
+				int paginaAtual = 1;
+				int totalPaginas;
+				do {
+					OmieListarNfseResponse resposta = omieApiService.listarNfsePorPagina(empresa, paginaAtual).get();
+					if (resposta == null || resposta.getNfseEncontradas() == null
+							|| resposta.getNfseEncontradas().isEmpty()) {
+						break;
+					}
+					totalPaginas = resposta.getTotalDePaginas();
+
+					List<NotaFiscalServicoEntity> loteParaSalvar = new ArrayList<>();
+					for (NfseDTO dto : resposta.getNfseEncontradas()) {
+						if (dto.getCabecalho() == null || dto.getCabecalho().getCodigoNf() == null)
+							continue;
+						OrdemServicoId osId = new OrdemServicoId(dto.getOrdemServico().getCodigoOs(),
+								empresa.getCodigo());
+						Optional<OrdemServicoEntity> osOptional = ordemServicoRepository.findById(osId);
+						if (osOptional.isEmpty()) {
+							logger.warn(
+									"Não foi possível associar a NFS-e nº {} pois a OS com código '{}' não foi encontrada.",
+									dto.getCabecalho().getNumeroNfse(), dto.getOrdemServico().getCodigoOs());
+							continue;
+						}
+						OrdemServicoEntity osEncontrada = osOptional.get();
+
+						EntidadeCompostaId nfId = new EntidadeCompostaId(
+								String.valueOf(dto.getCabecalho().getCodigoNf()), empresa.getCodigo());
+						NotaFiscalServicoEntity entidade = notaFiscalServicoRepository.findById(nfId)
+								.orElseGet(() -> new NotaFiscalServicoEntity(dto, empresa, osEncontrada));
+
+						entidade.setOrdemServico(osEncontrada); // Garante a associação
+						entidade.atualizarDados(dto);
+						loteParaSalvar.add(entidade);
+					}
+					notaFiscalServicoRepository.saveAll(loteParaSalvar);
+					paginaAtual++;
+				} while (paginaAtual <= totalPaginas);
+			} catch (Exception e) {
+				logger.error(
+						"!!! FALHA ao sincronizar Notas Fiscais para a empresa '{}'. Continuando para a próxima. Erro: {}",
+						empresa.getNomeFantasia(), e.getMessage());
+			}
+		}
+		logger.info("--- Sincronização de Notas Fiscais concluída ---");
+	}
+
 	@Transactional
 	public void sincronizarCnae() {
 		logger.info("--- Sincronizando CNAE (OMIE) ---");

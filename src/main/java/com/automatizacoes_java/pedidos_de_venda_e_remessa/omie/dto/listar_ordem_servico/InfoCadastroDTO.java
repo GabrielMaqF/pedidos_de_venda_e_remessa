@@ -38,6 +38,9 @@ public class InfoCadastroDTO {
 
 	@JsonProperty("cAmbiente")
 	private String ambiente;
+	
+	@JsonProperty("cOrigem")
+	private String origem;
 
 	private boolean faturada, cancelada;
 
