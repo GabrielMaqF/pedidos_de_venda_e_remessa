@@ -323,6 +323,8 @@ public class SincronizacaoService {
 
 		for (EmpresaEntity empresa : empresas) {
 			try {
+				Thread.sleep(1000L);
+				
 				logger.info("Processando Notas Fiscais para a empresa: {}", empresa.getNomeFantasia());
 				int paginaAtual = 1;
 				int totalPaginas;
@@ -375,6 +377,7 @@ public class SincronizacaoService {
 		logger.info("--- Sincronizando CNAE (OMIE) ---");
 		empresaRepository.findAll().stream().findFirst().ifPresent(empresa -> {
 			try {
+				Thread.sleep(1000L);
 				int paginaAtual = 1;
 				int totalPaginas;
 				do {
@@ -423,6 +426,7 @@ public class SincronizacaoService {
 		List<EmpresaEntity> empresas = empresaRepository.findAll();
 
 		for (EmpresaEntity empresa : empresas) {
+			Thread.sleep(1000L);
 			int paginaAtual = 1;
 			int totalPaginas;
 			do {
@@ -459,6 +463,7 @@ public class SincronizacaoService {
 
 		for (EmpresaEntity empresa : empresas) {
 			try {
+				Thread.sleep(1000L);
 				logger.info("Processando Contratos para a empresa: {}", empresa.getNomeFantasia());
 				int paginaAtual = 1;
 				int totalPaginas;
@@ -501,6 +506,7 @@ public class SincronizacaoService {
 		List<EmpresaEntity> empresas = empresaRepository.findAll();
 
 		for (EmpresaEntity empresa : empresas) {
+			Thread.sleep(1000L);
 			logger.info("Processando Ordens de Serviço para a empresa: {}", empresa.getNomeFantasia());
 			int paginaAtual = 1;
 			int totalPaginas;

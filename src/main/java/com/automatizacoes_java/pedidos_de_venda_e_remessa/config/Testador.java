@@ -29,7 +29,9 @@ public class Testador implements CommandLineRunner {
 	public void run(String... args) throws Exception {
 //		sincronizacaoService.sincronizarEmpresas();
 //		sincronizacaoService.sincronizarContratosServico();
-		testarTudo();
+//		testarTudo();
+		logger.info("--- INICIADO ---");
+
 	}
 
 	private void testarTudo() throws Exception {

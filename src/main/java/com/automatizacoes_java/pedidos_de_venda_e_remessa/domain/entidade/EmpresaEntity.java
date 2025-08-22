@@ -45,7 +45,6 @@ public class EmpresaEntity extends BaseEntity {
 	}
 }
 
-
 //package com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade;
 //
 //import java.io.Serializable;
