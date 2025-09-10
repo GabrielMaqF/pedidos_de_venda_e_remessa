@@ -11,12 +11,12 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.CategoriaEntity;
-import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.ClienteEntity;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.ContaCorrenteEntity;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.DepartamentoEntity;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.EmpresaEntity;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.ProjetoEntity;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.VendedorEntity;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.cliente_fornecedor.ClienteFornecedorEntity;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.id.OrdemServicoId;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.listar_nfse.NotaFiscalServicoEntity;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.dto.listar_ordem_servico.DepartamentoOsDTO;
@@ -59,7 +59,7 @@ public class OrdemServicoEntity {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumns({ @JoinColumn(name = "cliente_codigo", referencedColumnName = "codigo"),
 			@JoinColumn(name = "cliente_empresa_codigo", referencedColumnName = "empresa_codigo") })
-	private ClienteEntity cliente;
+	private ClienteFornecedorEntity cliente;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumns({ @JoinColumn(name = "categoria_codigo", referencedColumnName = "codigo"),
@@ -86,12 +86,12 @@ public class OrdemServicoEntity {
 //			@JoinColumn(name = "nota_fiscal_servico_empresa_codigo", referencedColumnName = "empresa_codigo") })
 //	private NotaFiscalServicoEntity notaFiscalServico;
 
-    // --- SUBSTITUA O @OneToOne pelo @OneToMany ---
-    @OneToMany(mappedBy = "ordemServico", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-    private List<NotaFiscalServicoEntity> notasFiscais = new ArrayList<>();
-    // --- FIM DA ALTERAÇÃO ---
-    
-    private String origem;
+	// --- SUBSTITUA O @OneToOne pelo @OneToMany ---
+	@OneToMany(mappedBy = "ordemServico", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	private List<NotaFiscalServicoEntity> notasFiscais = new ArrayList<>();
+	// --- FIM DA ALTERAÇÃO ---
+
+	private String origem;
 	private String numeroOs;
 	private String etapa;
 	private LocalDate dataPrevisao;
@@ -126,7 +126,7 @@ public class OrdemServicoEntity {
 	@OneToMany(mappedBy = "ordemServico", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	private List<OrdemServicoDepartamentoEntity> departamentos = new ArrayList<>();
 
-	public void atualizarDados(OrdemServicoDTO dto, EmpresaEntity empresa, ClienteEntity cliente,
+	public void atualizarDados(OrdemServicoDTO dto, EmpresaEntity empresa, ClienteFornecedorEntity cliente,
 			CategoriaEntity categoria, ContaCorrenteEntity contaCorrente, ProjetoEntity projeto,
 			List<DepartamentoEntity> departamentos, VendedorEntity vendedor) {
 

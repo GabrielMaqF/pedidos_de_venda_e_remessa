@@ -40,7 +40,8 @@ public abstract class BaseComposedEntity<T_CODIGO> extends BaseEntity {
 	private EmpresaEntity empresa;
 
 	@Column(name = "inativo")
-	private boolean inativo;
+	private Boolean inativo;
+
 }
 
 //package com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.base;

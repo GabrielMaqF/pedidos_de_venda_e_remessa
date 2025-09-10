@@ -11,7 +11,7 @@ import lombok.ToString;
 @Setter
 @ToString(callSuper = true)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ContaCorrenteDTO extends SharePointItemBaseDTO {
+public class ContaCorrenteSharepointDTO extends SharePointItemBaseDTO {
 
 	@JsonProperty("nCodCC_CC")
 	private Long codigo;

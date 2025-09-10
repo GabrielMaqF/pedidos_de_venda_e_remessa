@@ -12,7 +12,7 @@ import lombok.ToString;
 @Setter
 @ToString(callSuper = true)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class EmpresaDTO extends SharePointItemBaseDTO {
+public class EmpresaSharepointDTO extends SharePointItemBaseDTO {
 
 	@JsonProperty("AppKey")
 	private String appKey;

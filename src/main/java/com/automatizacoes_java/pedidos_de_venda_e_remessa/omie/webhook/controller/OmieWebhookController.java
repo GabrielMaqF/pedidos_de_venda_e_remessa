@@ -1,4 +1,4 @@
-package com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.controller;
+package com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.webhook.controller;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.dto.OmieWebhookDTO;
-import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.service.OmieWebhookService;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.webhook.service.OmieWebhookService;
 
 @RestController
 @RequestMapping("/webhooks")

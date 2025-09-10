@@ -25,5 +25,7 @@ public interface BaseRepository<T, ID, C> extends JpaRepository<T, ID> {
 	 * @return um Optional contendo a entidade se encontrada.
 	 */
 	Optional<T> findByCodigo(C codigo);
+	
+	Optional<T> findById(ID id);
 
 }

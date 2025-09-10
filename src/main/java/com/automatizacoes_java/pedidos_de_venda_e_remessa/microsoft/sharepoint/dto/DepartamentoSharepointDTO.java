@@ -11,7 +11,7 @@ import lombok.ToString;
 @Setter
 @ToString(callSuper = true)
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class DepartamentoDTO extends SharePointItemBaseDTO {
+public class DepartamentoSharepointDTO extends SharePointItemBaseDTO {
 
 	@JsonProperty("CodigoDEP")
 	private String codigo;

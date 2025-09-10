@@ -1,7 +1,7 @@
 package com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade;
 
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.base.BaseEntity;
-import com.automatizacoes_java.pedidos_de_venda_e_remessa.microsoft.sharepoint.dto.EmpresaDTO;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.microsoft.sharepoint.dto.EmpresaSharepointDTO;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -30,12 +30,12 @@ public class EmpresaEntity extends BaseEntity {
 	private String nomeFantasia;
 	private String cnpj;
 
-	public EmpresaEntity(EmpresaDTO dto) {
+	public EmpresaEntity(EmpresaSharepointDTO dto) {
 		this.setSharepointId(dto.getId());
 		this.atualizarDados(dto);
 	}
 
-	public void atualizarDados(EmpresaDTO dto) {
+	public void atualizarDados(EmpresaSharepointDTO dto) {
 		this.codigo = dto.getCodigoEmpresa();
 		this.appKey = dto.getAppKey();
 		this.appSecret = dto.getAppSecret();

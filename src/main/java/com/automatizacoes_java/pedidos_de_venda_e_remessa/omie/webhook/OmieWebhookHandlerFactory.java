@@ -13,11 +13,13 @@ public class OmieWebhookHandlerFactory {
 	private final Map<String, OmieWebhookHandler> handlers;
 
 	public OmieWebhookHandlerFactory(List<OmieWebhookHandler> handlerList) {
+		System.out.println("Handler List:\t" + handlerList);
 		this.handlers = handlerList.stream()
 				.collect(Collectors.toMap(OmieWebhookHandler::getTopicName, Function.identity()));
 	}
 
 	public Optional<OmieWebhookHandler> getHandler(String topicName) {
+		System.out.println("TOPICO:\t" + topicName.toLowerCase());
 		return Optional.ofNullable(handlers.get(topicName.toLowerCase()));
 	}
 }

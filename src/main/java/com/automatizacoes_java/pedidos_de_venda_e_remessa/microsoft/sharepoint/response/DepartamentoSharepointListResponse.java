@@ -1,11 +1,11 @@
 package com.automatizacoes_java.pedidos_de_venda_e_remessa.microsoft.sharepoint.response;
 
-import com.automatizacoes_java.pedidos_de_venda_e_remessa.microsoft.sharepoint.dto.DepartamentoDTO;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.microsoft.sharepoint.dto.DepartamentoSharepointDTO;
 
-public class DepartamentoSharepointListResponse extends SharePointListResponse<DepartamentoDTO> {
+public class DepartamentoSharepointListResponse extends SharePointListResponse<DepartamentoSharepointDTO> {
 
 	@Override
-	protected Class<DepartamentoDTO> getItemType() {
-		return DepartamentoDTO.class;
+	protected Class<DepartamentoSharepointDTO> getItemType() {
+		return DepartamentoSharepointDTO.class;
 	}
 }

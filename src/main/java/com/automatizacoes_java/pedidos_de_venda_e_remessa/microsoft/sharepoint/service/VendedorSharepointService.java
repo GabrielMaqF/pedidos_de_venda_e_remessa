@@ -2,11 +2,12 @@ package com.automatizacoes_java.pedidos_de_venda_e_remessa.microsoft.sharepoint.
 
 import org.springframework.stereotype.Service;
 
-import com.automatizacoes_java.pedidos_de_venda_e_remessa.microsoft.sharepoint.dto.VendedorDTO;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.microsoft.sharepoint.dto.VendedorSharepointDTO;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.microsoft.sharepoint.response.VendedorSharepointListResponse;
 
 @Service
-public class VendedorSharepointService extends AbstractSharePointService<VendedorDTO, VendedorSharepointListResponse> {
+public class VendedorSharepointService
+		extends AbstractSharePointService<VendedorSharepointDTO, VendedorSharepointListResponse> {
 
 	@Override
 	protected String getListId() {
@@ -19,7 +20,7 @@ public class VendedorSharepointService extends AbstractSharePointService<Vendedo
 	}
 
 	@Override
-	protected Class<VendedorDTO> getDtoClass() {
-		return VendedorDTO.class;
+	protected Class<VendedorSharepointDTO> getDtoClass() {
+		return VendedorSharepointDTO.class;
 	}
 }

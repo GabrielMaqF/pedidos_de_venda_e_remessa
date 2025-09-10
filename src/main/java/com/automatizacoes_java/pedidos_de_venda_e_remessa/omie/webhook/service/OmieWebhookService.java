@@ -1,4 +1,4 @@
-package com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.service;
+package com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.webhook.service;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +32,8 @@ public class OmieWebhookService {
 
 			String tipoEntidade = topicParts[0];
 			String acao = topicParts[1];
+			
+			logger.warn("TIPO: {}", tipoEntidade);
 
 			handlerFactory.getHandler(tipoEntidade).ifPresentOrElse(
 					handler -> handler.processar(payload.getEvent(), empresa, acao),

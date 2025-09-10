@@ -2,11 +2,12 @@ package com.automatizacoes_java.pedidos_de_venda_e_remessa.microsoft.sharepoint.
 
 import org.springframework.stereotype.Service;
 
-import com.automatizacoes_java.pedidos_de_venda_e_remessa.microsoft.sharepoint.dto.EmpresaDTO;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.microsoft.sharepoint.dto.EmpresaSharepointDTO;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.microsoft.sharepoint.response.EmpresaSharepointListResponse;
 
 @Service
-public class EmpresaSharepointService extends AbstractSharePointService<EmpresaDTO, EmpresaSharepointListResponse> {
+public class EmpresaSharepointService
+		extends AbstractSharePointService<EmpresaSharepointDTO, EmpresaSharepointListResponse> {
 
 	@Override
 	protected String getListId() {
@@ -19,7 +20,7 @@ public class EmpresaSharepointService extends AbstractSharePointService<EmpresaD
 	}
 
 	@Override
-	protected Class<EmpresaDTO> getDtoClass() {
-		return EmpresaDTO.class;
+	protected Class<EmpresaSharepointDTO> getDtoClass() {
+		return EmpresaSharepointDTO.class;
 	}
 }

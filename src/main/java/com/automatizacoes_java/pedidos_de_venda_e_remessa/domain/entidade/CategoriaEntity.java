@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.base.BaseComposedEntity;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.id.EntidadeCompostaId;
-import com.automatizacoes_java.pedidos_de_venda_e_remessa.microsoft.sharepoint.dto.CategoriaDTO;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.microsoft.sharepoint.dto.CategoriaSharepointDTO;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -35,7 +35,7 @@ public class CategoriaEntity extends BaseComposedEntity<String> implements Seria
 	@Column(name = "receita")
 	private boolean receita;
 
-	public CategoriaEntity(CategoriaDTO dto, EmpresaEntity e) {
+	public CategoriaEntity(CategoriaSharepointDTO dto, EmpresaEntity e) {
 		this.setSharepointId(dto.getId());
 		this.setCodigo(dto.getCodigo());
 		this.setId(new EntidadeCompostaId(String.valueOf(dto.getCodigo()), e.getCodigo()));
@@ -44,7 +44,7 @@ public class CategoriaEntity extends BaseComposedEntity<String> implements Seria
 		this.atualizarDados(dto);
 	}
 
-	public void atualizarDados(CategoriaDTO dto) {
+	public void atualizarDados(CategoriaSharepointDTO dto) {
 		this.setInativo(dto.isInativo());
 		this.setNome(dto.getDescricao());
 		this.setTotalizadora(dto.isTotalizadora());

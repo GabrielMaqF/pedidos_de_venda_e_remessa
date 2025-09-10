@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.base.BaseComposedEntity;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.id.EntidadeCompostaId;
-import com.automatizacoes_java.pedidos_de_venda_e_remessa.microsoft.sharepoint.dto.DepartamentoDTO;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.microsoft.sharepoint.dto.DepartamentoSharepointDTO;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
@@ -24,7 +24,7 @@ public class DepartamentoEntity extends BaseComposedEntity<String> implements Se
 
 	private String estrutura;
 
-	public DepartamentoEntity(DepartamentoDTO dto, EmpresaEntity e) {
+	public DepartamentoEntity(DepartamentoSharepointDTO dto, EmpresaEntity e) {
 		this.setSharepointId(dto.getId());
 		this.setCodigo(dto.getCodigo());
 		this.setId(new EntidadeCompostaId(String.valueOf(dto.getCodigo()), e.getCodigo()));
@@ -33,7 +33,7 @@ public class DepartamentoEntity extends BaseComposedEntity<String> implements Se
 		this.atualizarDados(dto);
 	}
 
-	public void atualizarDados(DepartamentoDTO dto) {
+	public void atualizarDados(DepartamentoSharepointDTO dto) {
 		this.setNome(dto.getDescricao());
 		this.setInativo(dto.isInativo());
 		this.estrutura = dto.getEstrutura();

@@ -30,6 +30,7 @@ public class Testador implements CommandLineRunner {
 //		sincronizacaoService.sincronizarEmpresas();
 //		sincronizacaoService.sincronizarContratosServico();
 //		testarTudo();
+		sincronizacaoService.sincronizarEmpresas();
 		logger.info("--- INICIADO ---");
 
 	}
