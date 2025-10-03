@@ -20,7 +20,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
-@Table(name = "tags_cliente") // Tabela específica para as tags de clientes
+@Table(name = "cliente_tags") // Tabela específica para as tags de clientes
 @Getter
 @Setter
 @NoArgsConstructor

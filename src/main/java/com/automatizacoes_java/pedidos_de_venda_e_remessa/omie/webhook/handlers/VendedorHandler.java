@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.EmpresaEntity;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.dto.vendedor.VendedorOmieDTO;
@@ -16,6 +17,7 @@ import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.webhook.OmieWebho
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+@Component
 public class VendedorHandler implements OmieWebhookHandler {
 	private static final Logger logger = LoggerFactory.getLogger(ClienteHandler.class);
 

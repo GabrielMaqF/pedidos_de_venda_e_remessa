@@ -27,28 +27,30 @@ public class Testador implements CommandLineRunner {
 
 	@Override
 	public void run(String... args) throws Exception {
-//		sincronizacaoService.sincronizarEmpresas();
-//		sincronizacaoService.sincronizarContratosServico();
-//		testarTudo();
-		sincronizacaoService.sincronizarEmpresas();
 		logger.info("--- INICIADO ---");
-
+//		sincronizacaoService.sincronizarEmpresas();
+		testarTudo();
+//		sincronizacaoService.sincronizarContratosServico();
 	}
 
 	private void testarTudo() throws Exception {
 
 		// 1. Sincroniza os dados base do SharePoint (Empresas, Clientes, etc.)
-		logger.info("--- INICIANDO TESTE: Sincronização de dados do SharePoint ---");
-		sincronizacaoService.sincronizarTudo();
-		logger.info("--- FIM TESTE: Sincronização de dados do SharePoint ---");
-
-		// 2. Sincroniza as Ordens de Serviço do OMIE, que dependem dos dados acima
-		logger.info("--- INICIANDO TESTE: Sincronização de Ordens de Serviço do OMIE ---");
-		sincronizacaoService.sincronizarOrdensDeServico();
-		logger.info("--- FIM TESTE: Sincronização de Ordens de Serviço do OMIE ---");
-
-		sincronizacaoService.sincronizarNotasFiscais();
-
+//		logger.info("--- INICIANDO TESTE: Sincronização de dados do SharePoint ---");
+//		sincronizacaoService.sincronizarTudo();
+//		logger.info("--- FIM TESTE: Sincronização de dados do SharePoint ---");
+//
+//		// 2. Sincroniza as Ordens de Serviço do OMIE, que dependem dos dados acima
+//		logger.info("--- INICIANDO TESTE: Sincronização de Ordens de Serviço do OMIE ---");
+//		sincronizacaoService.sincronizarOrdensDeServico();
+//		logger.info("--- FIM TESTE: Sincronização de Ordens de Serviço do OMIE ---");
+//
+//		sincronizacaoService.sincronizarNotasFiscais();
+//		sincronizacaoService.sincronizarCnae();
+//		sincronizacaoService.sincronizarTiposFaturamentoContrato();
+//		sincronizacaoService.sincronizarServicosCadastrados();
+//		sincronizacaoService.sincronizarOrdensDeServico();
+//		sincronizacaoService.sincronizarContratosServico();
 		System.out.println(" ===== FIM ===== ");
 	}
 

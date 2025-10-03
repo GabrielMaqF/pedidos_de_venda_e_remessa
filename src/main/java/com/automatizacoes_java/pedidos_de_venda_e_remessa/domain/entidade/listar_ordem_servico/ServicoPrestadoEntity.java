@@ -52,9 +52,12 @@ public class ServicoPrestadoEntity {
 	private ImpostosEmbeddable impostos;
 
 	public ServicoPrestadoEntity(ServicoPrestadoDTO dto, OrdemServicoEntity ordemServico) {
-		this.id = new ServicoPrestadoId(ordemServico.getId().getCodigoOs(), ordemServico.getId().getEmpresaCodigo(),
-				dto.getSequenciaItem());
 		this.ordemServico = ordemServico;
+		this.id = new ServicoPrestadoId(
+				this.ordemServico.getId().getCodigoOs(), 
+				this.ordemServico.getId().getEmpresaCodigo(),
+				dto.getSequenciaItem()
+				);
 		this.atualizarDados(dto);
 	}
 
