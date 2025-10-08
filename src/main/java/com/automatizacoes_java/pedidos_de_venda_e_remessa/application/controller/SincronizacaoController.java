@@ -27,6 +27,9 @@ public class SincronizacaoController {
 
     @PostMapping("/all")
     public Map<String, Object> syncAll(){
+    	
+    	sync.sincronizarTudo();
+    	
         Map<String, Object> out = new LinkedHashMap<>();
         Instant start = Instant.now();
         out.put("startedAt", OffsetDateTime.now().toString());
