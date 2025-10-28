@@ -11,6 +11,7 @@ import com.automatizacoes_java.pedidos_de_venda_e_remessa.microsoft.config.Graph
 @SpringBootApplication
 @EnableAsync
 @EnableConfigurationProperties({ GraphTokenProperties.class, GraphProperties.class })
+//Sem Sharepoint
 public class PedidosDeVendaERemessaApplication {
 
 	public static void main(String[] args) {
