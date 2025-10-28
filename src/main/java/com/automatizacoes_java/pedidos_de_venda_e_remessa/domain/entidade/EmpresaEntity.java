@@ -1,8 +1,5 @@
 package com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade;
 
-import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.base.BaseEntity;
-import com.automatizacoes_java.pedidos_de_venda_e_remessa.microsoft.sharepoint.dto.EmpresaSharepointDTO;
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
@@ -18,7 +15,7 @@ import lombok.ToString;
 @Setter
 @NoArgsConstructor
 @ToString(callSuper = true)
-public class EmpresaEntity extends BaseEntity {
+public class EmpresaEntity {
 
 	@Id
 	@Column(name = "codigo")
@@ -30,19 +27,19 @@ public class EmpresaEntity extends BaseEntity {
 	private String nomeFantasia;
 	private String cnpj;
 
-	public EmpresaEntity(EmpresaSharepointDTO dto) {
-		this.setSharepointId(dto.getId());
-		this.atualizarDados(dto);
-	}
-
-	public void atualizarDados(EmpresaSharepointDTO dto) {
-		this.codigo = dto.getCodigoEmpresa();
-		this.appKey = dto.getAppKey();
-		this.appSecret = dto.getAppSecret();
-		this.razaoSocial = dto.getRazaoSocial();
-		this.nomeFantasia = dto.getNomeFantasia();
-		this.cnpj = dto.getCnpj();
-	}
+//	public EmpresaEntity(EmpresaSharepointDTO dto) {
+//		this.setSharepointId(dto.getId());
+//		this.atualizarDados(dto);
+//	}
+//
+//	public void atualizarDados(EmpresaSharepointDTO dto) {
+//		this.codigo = dto.getCodigoEmpresa();
+//		this.appKey = dto.getAppKey();
+//		this.appSecret = dto.getAppSecret();
+//		this.razaoSocial = dto.getRazaoSocial();
+//		this.nomeFantasia = dto.getNomeFantasia();
+//		this.cnpj = dto.getCnpj();
+//	}
 }
 
 //package com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade;

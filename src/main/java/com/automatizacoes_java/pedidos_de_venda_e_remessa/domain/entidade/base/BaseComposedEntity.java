@@ -18,7 +18,7 @@ import lombok.ToString;
 @Getter
 @Setter
 @ToString(exclude = "empresa")
-public abstract class BaseComposedEntity<T_CODIGO> extends BaseEntity {
+public abstract class BaseComposedEntity<T_CODIGO> {
 
 	@EmbeddedId
 	private EntidadeCompostaId id;

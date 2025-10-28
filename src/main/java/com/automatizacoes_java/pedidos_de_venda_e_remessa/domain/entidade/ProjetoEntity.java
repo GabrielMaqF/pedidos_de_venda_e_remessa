@@ -4,7 +4,6 @@ import java.io.Serializable;
 
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.base.BaseComposedEntity;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.id.EntidadeCompostaId;
-import com.automatizacoes_java.pedidos_de_venda_e_remessa.microsoft.sharepoint.dto.ProjetoSharepointDTO;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.dto.projeto.ProjetoOmieDTO;
 
 import jakarta.persistence.Entity;
@@ -25,14 +24,14 @@ public class ProjetoEntity extends BaseComposedEntity<Long> implements Serializa
 
 	private String codInt;
 
-	public ProjetoEntity(ProjetoSharepointDTO dto, EmpresaEntity e) {
-		this.setSharepointId(dto.getId());
-		this.setCodigo(dto.getCodigo());
-		this.setId(new EntidadeCompostaId(String.valueOf(dto.getCodigo()), e.getCodigo()));
-		this.setEmpresa(e);
-
-		this.atualizarDados(dto);
-	}
+//	public ProjetoEntity(ProjetoSharepointDTO dto, EmpresaEntity e) {
+//		this.setSharepointId(dto.getId());
+//		this.setCodigo(dto.getCodigo());
+//		this.setId(new EntidadeCompostaId(String.valueOf(dto.getCodigo()), e.getCodigo()));
+//		this.setEmpresa(e);
+//
+//		this.atualizarDados(dto);
+//	}
 
 	public ProjetoEntity(ProjetoOmieDTO dto, EmpresaEntity e) {
 		this.setId(new EntidadeCompostaId(String.valueOf(dto.getCodigo()), e.getCodigo()));
@@ -48,8 +47,8 @@ public class ProjetoEntity extends BaseComposedEntity<Long> implements Serializa
 		this.setInativo(dto.getInativo());
 	}
 
-	public void atualizarDados(ProjetoSharepointDTO dto) {
-		this.setNome(dto.getNome());
-		this.setInativo(dto.isInativo());
-	}
+//	public void atualizarDados(ProjetoSharepointDTO dto) {
+//		this.setNome(dto.getNome());
+//		this.setInativo(dto.isInativo());
+//	}
 }

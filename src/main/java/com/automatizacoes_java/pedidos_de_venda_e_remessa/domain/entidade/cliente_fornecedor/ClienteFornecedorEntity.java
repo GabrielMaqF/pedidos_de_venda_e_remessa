@@ -10,7 +10,6 @@ import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.BaseAt
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.EmpresaEntity;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.base.BaseComposedEntity;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.id.EntidadeCompostaId;
-import com.automatizacoes_java.pedidos_de_venda_e_remessa.microsoft.sharepoint.dto.ClienteSharepointDTO;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.dto.cliente.ClienteOmieDTO;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.dto.cliente.DadosBancariosClienteOmieDTO;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.dto.cliente.EnderecoEntregaClienteOmieDTO;
@@ -72,16 +71,16 @@ public class ClienteFornecedorEntity extends BaseComposedEntity<Long> implements
 	private String codigoIntegracao, nomeFantasia, cnpj, cidade, bairro, estado, cep, telefone, enderecoNumero,
 			complemento, inscricaoEstadual, inscricaoMunicipal, cnae;
 
-	public ClienteFornecedorEntity(ClienteSharepointDTO dto, EmpresaEntity e) {
-		this.setSharepointId(dto.getId());
-		this.setCodigo(dto.getCodigo());
-		this.setId(new EntidadeCompostaId(String.valueOf(dto.getCodigo()), e.getCodigo()));
-		this.setEmpresa(e);
-
-		this.codigoIntegracao = dto.getCodigoIntegracao();
-
-		this.atualizarDados(dto);
-	}
+//	public ClienteFornecedorEntity(ClienteSharepointDTO dto, EmpresaEntity e) {
+//		this.setSharepointId(dto.getId());
+//		this.setCodigo(dto.getCodigo());
+//		this.setId(new EntidadeCompostaId(String.valueOf(dto.getCodigo()), e.getCodigo()));
+//		this.setEmpresa(e);
+//
+//		this.codigoIntegracao = dto.getCodigoIntegracao();
+//
+//		this.atualizarDados(dto);
+//	}
 
 	public ClienteFornecedorEntity(ClienteOmieDTO dto, EmpresaEntity e) {
 		this.setId(new EntidadeCompostaId(String.valueOf(dto.getCodigoClienteOmie()), e.getCodigo()));
@@ -92,21 +91,21 @@ public class ClienteFornecedorEntity extends BaseComposedEntity<Long> implements
 		this.atualizarDados(dto);
 	}
 
-	public void atualizarDados(ClienteSharepointDTO dto) {
-
-		this.setNome(dto.getRazaoSocial());
-		this.nomeFantasia = dto.getNomeFantasia();
-		this.cnpj = dto.getCnpj();
-
-		this.cidade = dto.getCidade();
-		this.bairro = dto.getBairro();
-		this.estado = dto.getEstado();
-		this.cep = dto.getCep();
-
-		this.telefone = dto.getTelefone();
-
-		this.setInativo(dto.isInativo());
-	}
+//	public void atualizarDados(ClienteSharepointDTO dto) {
+//
+//		this.setNome(dto.getRazaoSocial());
+//		this.nomeFantasia = dto.getNomeFantasia();
+//		this.cnpj = dto.getCnpj();
+//
+//		this.cidade = dto.getCidade();
+//		this.bairro = dto.getBairro();
+//		this.estado = dto.getEstado();
+//		this.cep = dto.getCep();
+//
+//		this.telefone = dto.getTelefone();
+//
+//		this.setInativo(dto.isInativo());
+//	}
 
 	@Override
 	public void atualizarDados(ClienteOmieDTO dto) {

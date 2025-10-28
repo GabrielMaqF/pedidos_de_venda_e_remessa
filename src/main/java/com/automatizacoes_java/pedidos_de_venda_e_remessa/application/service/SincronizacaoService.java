@@ -6,15 +6,12 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
-import java.util.function.BiConsumer;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,7 +21,6 @@ import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.Depart
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.EmpresaEntity;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.ProjetoEntity;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.VendedorEntity;
-import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.base.BaseComposedEntity;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.cliente_fornecedor.ClienteFornecedorEntity;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.id.EntidadeCompostaId;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.id.OrdemServicoId;
@@ -50,22 +46,6 @@ import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.repository.list
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.repository.listar_ordem_servico.ServicoPrestadoRepository;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.repository.listar_servico_cadastrado.ServicoCadastroRepository;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.repository.listar_tipo_faturamento_contrato.TipoFaturamentoContratoRepository;
-import com.automatizacoes_java.pedidos_de_venda_e_remessa.microsoft.sharepoint.dto.CategoriaSharepointDTO;
-import com.automatizacoes_java.pedidos_de_venda_e_remessa.microsoft.sharepoint.dto.ClienteSharepointDTO;
-import com.automatizacoes_java.pedidos_de_venda_e_remessa.microsoft.sharepoint.dto.ContaCorrenteSharepointDTO;
-import com.automatizacoes_java.pedidos_de_venda_e_remessa.microsoft.sharepoint.dto.DepartamentoSharepointDTO;
-import com.automatizacoes_java.pedidos_de_venda_e_remessa.microsoft.sharepoint.dto.EmpresaSharepointDTO;
-import com.automatizacoes_java.pedidos_de_venda_e_remessa.microsoft.sharepoint.dto.ProjetoSharepointDTO;
-import com.automatizacoes_java.pedidos_de_venda_e_remessa.microsoft.sharepoint.dto.SharePointItemBaseDTO;
-import com.automatizacoes_java.pedidos_de_venda_e_remessa.microsoft.sharepoint.dto.VendedorSharepointDTO;
-import com.automatizacoes_java.pedidos_de_venda_e_remessa.microsoft.sharepoint.service.AbstractSharePointService;
-import com.automatizacoes_java.pedidos_de_venda_e_remessa.microsoft.sharepoint.service.CategoriaSharepointService;
-import com.automatizacoes_java.pedidos_de_venda_e_remessa.microsoft.sharepoint.service.ClienteSharepointService;
-import com.automatizacoes_java.pedidos_de_venda_e_remessa.microsoft.sharepoint.service.ContaCorrenteSharepointService;
-import com.automatizacoes_java.pedidos_de_venda_e_remessa.microsoft.sharepoint.service.DepartamentoSharepointService;
-import com.automatizacoes_java.pedidos_de_venda_e_remessa.microsoft.sharepoint.service.EmpresaSharepointService;
-import com.automatizacoes_java.pedidos_de_venda_e_remessa.microsoft.sharepoint.service.ProjetoSharepointService;
-import com.automatizacoes_java.pedidos_de_venda_e_remessa.microsoft.sharepoint.service.VendedorSharepointService;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.dto.listar_contrato_servico.ContratoServicoCadastroDTO;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.dto.listar_nfse.NfseDTO;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.dto.listar_ordem_servico.OrdemServicoDTO;
@@ -81,23 +61,8 @@ import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.service.OmieApiCl
 
 @Service
 public class SincronizacaoService {
-
+	
 	private static final Logger logger = LoggerFactory.getLogger(SincronizacaoService.class);
-
-	@Autowired
-	private EmpresaSharepointService empresaSharepointService;
-	@Autowired
-	private CategoriaSharepointService categoriaSharepointService;
-	@Autowired
-	private ClienteSharepointService clienteSharepointService;
-	@Autowired
-	private DepartamentoSharepointService departamentoSharepointService;
-	@Autowired
-	private ProjetoSharepointService projetoSharepointService;
-	@Autowired
-	private ContaCorrenteSharepointService contaCorrenteSharepointService;
-	@Autowired
-	private VendedorSharepointService vendedorSharepointService;
 
 	@Autowired
 	private EmpresaRepository empresaRepository;
@@ -134,13 +99,13 @@ public class SincronizacaoService {
 	public void sincronizarTudo() {
 		logger.info("--- INICIANDO ROTINA DE SINCRONIZAÇÃO COMPLETA ---");
 		try {
-			sincronizarEmpresas();
-			sincronizarCategorias();
-			sincronizarDepartamento();
-			sincronizarProjetos();
-			sincronizarContaCorrente();
-			sincronizarVendedor();
-			sincronizarClientes();
+//			sincronizarEmpresas();
+//			sincronizarCategorias();
+//			sincronizarDepartamento();
+//			sincronizarProjetos();
+//			sincronizarContaCorrente();
+//			sincronizarVendedor();
+//			sincronizarClientes();
 			sincronizarServicosCadastrados();
 			sincronizarContratosServico();
 			sincronizarTiposFaturamentoContrato();
@@ -151,170 +116,6 @@ public class SincronizacaoService {
 		}
 	}
 
-	@Transactional
-	public void sincronizarEmpresas() throws ExecutionException, InterruptedException {
-		logger.info("Sincronizando Empresas...");
-		List<EmpresaSharepointDTO> dtos = empresaSharepointService.listarTodos().get();
-		if (dtos.isEmpty()) {
-			logger.info("Nenhuma empresa encontrada no SharePoint para sincronizar.");
-			return;
-		}
-
-		// 1. Coletar os códigos das empresas (que são as chaves primárias)
-		Set<Long> codigosEmpresa = dtos.stream().map(EmpresaSharepointDTO::getCodigoEmpresa)
-				.collect(Collectors.toSet());
-
-		// 2. Buscar as entidades existentes pelos seus códigos
-		Map<Long, EmpresaEntity> entidadesExistentes = empresaRepository.findAllById(codigosEmpresa).stream()
-				.collect(Collectors.toMap(EmpresaEntity::getCodigo, Function.identity()));
-
-		List<EmpresaEntity> entidadesParaSalvar = new ArrayList<>();
-		for (EmpresaSharepointDTO dto : dtos) {
-			// 3. Verificar se a entidade existe usando o código da empresa
-			EmpresaEntity entidade = entidadesExistentes.get(dto.getCodigoEmpresa());
-			if (entidade != null) {
-				entidade.atualizarDados(dto);
-			} else {
-				entidade = new EmpresaEntity(dto);
-			}
-			entidadesParaSalvar.add(entidade);
-		}
-
-		empresaRepository.saveAll(entidadesParaSalvar);
-		logger.info("Sincronização de Empresas concluída. {} registros processados.", entidadesParaSalvar.size());
-	}
-
-	@Transactional
-	public void sincronizarCategorias() throws ExecutionException, InterruptedException {
-		sincronizarEntidadeDependente("Categorias", categoriaSharepointService, categoriaRepository,
-				CategoriaSharepointDTO::getNomeFantasiaEmpresa,
-				(dto, empresa) -> new EntidadeCompostaId(dto.getCodigo(), empresa.getCodigo()), CategoriaEntity::new,
-				(entidade, dto) -> entidade.atualizarDados(dto));
-	}
-
-	@Transactional
-	public void sincronizarClientes() throws ExecutionException, InterruptedException {
-		sincronizarEntidadeDependente("Clientes", clienteSharepointService, clienteFornecedorRepository,
-				ClienteSharepointDTO::getNomeFantasiaEmpresa,
-				(dto, empresa) -> new EntidadeCompostaId(String.valueOf(dto.getCodigo()), empresa.getCodigo()),
-				ClienteFornecedorEntity::new, (entidade, dto) -> entidade.atualizarDados(dto));
-	}
-
-	@Transactional
-	public void sincronizarDepartamento() throws ExecutionException, InterruptedException {
-		sincronizarEntidadeDependente("Departamentos", departamentoSharepointService, departamentoRepository,
-				DepartamentoSharepointDTO::getNomeFantasiaEmpresa,
-				(dto, empresa) -> new EntidadeCompostaId(dto.getCodigo(), empresa.getCodigo()), DepartamentoEntity::new,
-				(entidade, dto) -> entidade.atualizarDados(dto));
-	}
-
-	@Transactional
-	public void sincronizarProjetos() throws ExecutionException, InterruptedException {
-		sincronizarEntidadeDependente("Projetos", projetoSharepointService, projetoRepository,
-				ProjetoSharepointDTO::getNomeFantasiaEmpresa,
-				(dto, empresa) -> new EntidadeCompostaId(String.valueOf(dto.getCodigo()), empresa.getCodigo()),
-				ProjetoEntity::new, (entidade, dto) -> entidade.atualizarDados(dto));
-	}
-
-	@Transactional
-	public void sincronizarContaCorrente() throws ExecutionException, InterruptedException {
-		sincronizarEntidadeDependente("Contas Correntes", contaCorrenteSharepointService, contaCorrenteRepository,
-				ContaCorrenteSharepointDTO::getNomeFantasiaEmpresa,
-				(dto, empresa) -> new EntidadeCompostaId(String.valueOf(dto.getCodigo()), empresa.getCodigo()),
-				ContaCorrenteEntity::new, (entidade, dto) -> entidade.atualizarDados(dto));
-	}
-
-	@Transactional
-	public void sincronizarVendedor() throws ExecutionException, InterruptedException {
-		sincronizarEntidadeDependente("Vendedores", vendedorSharepointService, vendedorRepository,
-				VendedorSharepointDTO::getNomeFantasiaEmpresa,
-				(dto, empresa) -> new EntidadeCompostaId(String.valueOf(dto.getCodigo()), empresa.getCodigo()),
-				VendedorEntity::new, (entidade, dto) -> entidade.atualizarDados(dto));
-	}
-
-	private <T_DTO extends SharePointItemBaseDTO,
-			// CORREÇÃO 3: Usar wildcard (?) para indicar que aceitamos qualquer tipo de
-			// BaseComposedEntity
-			T_ENTITY extends BaseComposedEntity<?>> void sincronizarEntidadeDependente(String entidadeNome,
-					AbstractSharePointService<T_DTO, ?> service, JpaRepository<T_ENTITY, EntidadeCompostaId> repository,
-					Function<T_DTO, String> empresaNomeExtractor,
-					BiFunction<T_DTO, EmpresaEntity, EntidadeCompostaId> idCreator,
-					BiFunction<T_DTO, EmpresaEntity, T_ENTITY> entityCreator, BiConsumer<T_ENTITY, T_DTO> entityUpdater)
-					throws ExecutionException, InterruptedException {
-
-		logger.info("Sincronizando {}...", entidadeNome);
-
-		List<T_DTO> dtos = service.listarTodos().get();
-		if (dtos.isEmpty()) {
-			logger.info("Nenhum(a) {} encontrado(a) no SharePoint para sincronizar.", entidadeNome.toLowerCase());
-			return;
-		}
-
-		Set<String> nomesEmpresa = dtos.stream().map(empresaNomeExtractor).collect(Collectors.toSet());
-		Map<String, EmpresaEntity> mapaDeEmpresas = empresaRepository.findByNomeFantasiaIn(nomesEmpresa).stream()
-				.collect(Collectors.toMap(EmpresaEntity::getNomeFantasia, Function.identity()));
-
-		Set<EntidadeCompostaId> idsParaBuscar = dtos.stream().map(dto -> {
-			EmpresaEntity empresa = mapaDeEmpresas.get(empresaNomeExtractor.apply(dto));
-			return empresa != null ? idCreator.apply(dto, empresa) : null;
-		}).filter(id -> id != null).collect(Collectors.toSet());
-
-		// Converte o Set para uma List para poder dividir em lotes
-		List<EntidadeCompostaId> idsList = new ArrayList<>(idsParaBuscar);
-		int batchSize = 500; // Um tamanho de lote razoável para a maioria dos bancos de dados
-		Map<EntidadeCompostaId, T_ENTITY> entidadesExistentes = new java.util.HashMap<>();
-
-		// Itera sobre a lista de IDs em lotes de 'batchSize'
-		for (int i = 0; i < idsList.size(); i += batchSize) {
-			int end = Math.min(i + batchSize, idsList.size());
-			List<EntidadeCompostaId> batchIds = idsList.subList(i, end);
-
-			// Busca apenas um lote de cada vez e adiciona ao mapa de resultados
-			repository.findAllById(batchIds).forEach(entity -> entidadesExistentes.put(entity.getId(), entity));
-		}
-
-		// Bloco novo com salvamento em lotes
-		List<T_ENTITY> loteParaSalvar = new ArrayList<>();
-		final int batchSizeSave = 500; // O mesmo tamanho do lote de leitura ou um valor otimizado para escrita.
-		int totalProcessado = 0;
-
-		for (T_DTO dto : dtos) {
-			EmpresaEntity empresaAssociada = mapaDeEmpresas.get(empresaNomeExtractor.apply(dto));
-			if (empresaAssociada == null) {
-				logger.warn("{} com SharePoint ID '{}' ignorado(a): empresa '{}' não encontrada.", entidadeNome,
-						dto.getId(), empresaNomeExtractor.apply(dto));
-				continue;
-			}
-
-			EntidadeCompostaId idAtual = idCreator.apply(dto, empresaAssociada);
-			T_ENTITY entidade = entidadesExistentes.get(idAtual);
-
-			if (entidade != null) {
-				entidade.setEmpresa(empresaAssociada);
-				entityUpdater.accept(entidade, dto);
-			} else {
-				entidade = entityCreator.apply(dto, empresaAssociada);
-			}
-			loteParaSalvar.add(entidade);
-
-			// Verifica se o lote atingiu o tamanho máximo
-			if (loteParaSalvar.size() == batchSizeSave) {
-				repository.saveAll(loteParaSalvar);
-				totalProcessado += loteParaSalvar.size();
-				loteParaSalvar.clear(); // Limpa a lista para o próximo lote
-				logger.info("... {} {} processados...", totalProcessado, entidadeNome);
-			}
-		}
-
-		// Salva o lote final (caso o número total de itens não seja múltiplo do
-		// batchSizeSave)
-		if (!loteParaSalvar.isEmpty()) {
-			repository.saveAll(loteParaSalvar);
-			totalProcessado += loteParaSalvar.size();
-		}
-
-		logger.info("Sincronização de {} concluída. {} registros processados no total.", entidadeNome, totalProcessado);
-	}
 
 	// ---------------------------- OMIE ------------------------------
 	@Transactional
@@ -671,3 +472,168 @@ public class SincronizacaoService {
 				: departamentoRepository.findById(new EntidadeCompostaId(cod, emp.getCodigo()));
 	}
 }
+
+//@Transactional
+//public void sincronizarEmpresas() throws ExecutionException, InterruptedException {
+//	logger.info("Sincronizando Empresas...");
+//	List<EmpresaSharepointDTO> dtos = empresaSharepointService.listarTodos().get();
+//	if (dtos.isEmpty()) {
+//		logger.info("Nenhuma empresa encontrada no SharePoint para sincronizar.");
+//		return;
+//	}
+//
+//	// 1. Coletar os códigos das empresas (que são as chaves primárias)
+//	Set<Long> codigosEmpresa = dtos.stream().map(EmpresaSharepointDTO::getCodigoEmpresa)
+//			.collect(Collectors.toSet());
+//
+//	// 2. Buscar as entidades existentes pelos seus códigos
+//	Map<Long, EmpresaEntity> entidadesExistentes = empresaRepository.findAllById(codigosEmpresa).stream()
+//			.collect(Collectors.toMap(EmpresaEntity::getCodigo, Function.identity()));
+//
+//	List<EmpresaEntity> entidadesParaSalvar = new ArrayList<>();
+//	for (EmpresaSharepointDTO dto : dtos) {
+//		// 3. Verificar se a entidade existe usando o código da empresa
+//		EmpresaEntity entidade = entidadesExistentes.get(dto.getCodigoEmpresa());
+//		if (entidade != null) {
+//			entidade.atualizarDados(dto);
+//		} else {
+//			entidade = new EmpresaEntity(dto);
+//		}
+//		entidadesParaSalvar.add(entidade);
+//	}
+//
+//	empresaRepository.saveAll(entidadesParaSalvar);
+//	logger.info("Sincronização de Empresas concluída. {} registros processados.", entidadesParaSalvar.size());
+//}
+//
+//@Transactional
+//public void sincronizarCategorias() throws ExecutionException, InterruptedException {
+//	sincronizarEntidadeDependente("Categorias", categoriaSharepointService, categoriaRepository,
+//			CategoriaSharepointDTO::getNomeFantasiaEmpresa,
+//			(dto, empresa) -> new EntidadeCompostaId(dto.getCodigo(), empresa.getCodigo()), CategoriaEntity::new,
+//			(entidade, dto) -> entidade.atualizarDados(dto));
+//}
+//
+//@Transactional
+//public void sincronizarClientes() throws ExecutionException, InterruptedException {
+//	sincronizarEntidadeDependente("Clientes", clienteSharepointService, clienteFornecedorRepository,
+//			ClienteSharepointDTO::getNomeFantasiaEmpresa,
+//			(dto, empresa) -> new EntidadeCompostaId(String.valueOf(dto.getCodigo()), empresa.getCodigo()),
+//			ClienteFornecedorEntity::new, (entidade, dto) -> entidade.atualizarDados(dto));
+//}
+//
+//@Transactional
+//public void sincronizarDepartamento() throws ExecutionException, InterruptedException {
+//	sincronizarEntidadeDependente("Departamentos", departamentoSharepointService, departamentoRepository,
+//			DepartamentoSharepointDTO::getNomeFantasiaEmpresa,
+//			(dto, empresa) -> new EntidadeCompostaId(dto.getCodigo(), empresa.getCodigo()), DepartamentoEntity::new,
+//			(entidade, dto) -> entidade.atualizarDados(dto));
+//}
+//
+//@Transactional
+//public void sincronizarProjetos() throws ExecutionException, InterruptedException {
+//	sincronizarEntidadeDependente("Projetos", projetoSharepointService, projetoRepository,
+//			ProjetoSharepointDTO::getNomeFantasiaEmpresa,
+//			(dto, empresa) -> new EntidadeCompostaId(String.valueOf(dto.getCodigo()), empresa.getCodigo()),
+//			ProjetoEntity::new, (entidade, dto) -> entidade.atualizarDados(dto));
+//}
+//
+//@Transactional
+//public void sincronizarContaCorrente() throws ExecutionException, InterruptedException {
+//	sincronizarEntidadeDependente("Contas Correntes", contaCorrenteSharepointService, contaCorrenteRepository,
+//			ContaCorrenteSharepointDTO::getNomeFantasiaEmpresa,
+//			(dto, empresa) -> new EntidadeCompostaId(String.valueOf(dto.getCodigo()), empresa.getCodigo()),
+//			ContaCorrenteEntity::new, (entidade, dto) -> entidade.atualizarDados(dto));
+//}
+//
+//@Transactional
+//public void sincronizarVendedor() throws ExecutionException, InterruptedException {
+//	sincronizarEntidadeDependente("Vendedores", vendedorSharepointService, vendedorRepository,
+//			VendedorSharepointDTO::getNomeFantasiaEmpresa,
+//			(dto, empresa) -> new EntidadeCompostaId(String.valueOf(dto.getCodigo()), empresa.getCodigo()),
+//			VendedorEntity::new, (entidade, dto) -> entidade.atualizarDados(dto));
+//}
+//
+//private <T_DTO extends SharePointItemBaseDTO,
+//		// CORREÇÃO 3: Usar wildcard (?) para indicar que aceitamos qualquer tipo de
+//		// BaseComposedEntity
+//		T_ENTITY extends BaseComposedEntity<?>> void sincronizarEntidadeDependente(String entidadeNome,
+//				AbstractSharePointService<T_DTO, ?> service, JpaRepository<T_ENTITY, EntidadeCompostaId> repository,
+//				Function<T_DTO, String> empresaNomeExtractor,
+//				BiFunction<T_DTO, EmpresaEntity, EntidadeCompostaId> idCreator,
+//				BiFunction<T_DTO, EmpresaEntity, T_ENTITY> entityCreator, BiConsumer<T_ENTITY, T_DTO> entityUpdater)
+//				throws ExecutionException, InterruptedException {
+//
+//	logger.info("Sincronizando {}...", entidadeNome);
+//
+//	List<T_DTO> dtos = service.listarTodos().get();
+//	if (dtos.isEmpty()) {
+//		logger.info("Nenhum(a) {} encontrado(a) no SharePoint para sincronizar.", entidadeNome.toLowerCase());
+//		return;
+//	}
+//
+//	Set<String> nomesEmpresa = dtos.stream().map(empresaNomeExtractor).collect(Collectors.toSet());
+//	Map<String, EmpresaEntity> mapaDeEmpresas = empresaRepository.findByNomeFantasiaIn(nomesEmpresa).stream()
+//			.collect(Collectors.toMap(EmpresaEntity::getNomeFantasia, Function.identity()));
+//
+//	Set<EntidadeCompostaId> idsParaBuscar = dtos.stream().map(dto -> {
+//		EmpresaEntity empresa = mapaDeEmpresas.get(empresaNomeExtractor.apply(dto));
+//		return empresa != null ? idCreator.apply(dto, empresa) : null;
+//	}).filter(id -> id != null).collect(Collectors.toSet());
+//
+//	// Converte o Set para uma List para poder dividir em lotes
+//	List<EntidadeCompostaId> idsList = new ArrayList<>(idsParaBuscar);
+//	int batchSize = 500; // Um tamanho de lote razoável para a maioria dos bancos de dados
+//	Map<EntidadeCompostaId, T_ENTITY> entidadesExistentes = new java.util.HashMap<>();
+//
+//	// Itera sobre a lista de IDs em lotes de 'batchSize'
+//	for (int i = 0; i < idsList.size(); i += batchSize) {
+//		int end = Math.min(i + batchSize, idsList.size());
+//		List<EntidadeCompostaId> batchIds = idsList.subList(i, end);
+//
+//		// Busca apenas um lote de cada vez e adiciona ao mapa de resultados
+//		repository.findAllById(batchIds).forEach(entity -> entidadesExistentes.put(entity.getId(), entity));
+//	}
+//
+//	// Bloco novo com salvamento em lotes
+//	List<T_ENTITY> loteParaSalvar = new ArrayList<>();
+//	final int batchSizeSave = 500; // O mesmo tamanho do lote de leitura ou um valor otimizado para escrita.
+//	int totalProcessado = 0;
+//
+//	for (T_DTO dto : dtos) {
+//		EmpresaEntity empresaAssociada = mapaDeEmpresas.get(empresaNomeExtractor.apply(dto));
+//		if (empresaAssociada == null) {
+//			logger.warn("{} com SharePoint ID '{}' ignorado(a): empresa '{}' não encontrada.", entidadeNome,
+//					dto.getId(), empresaNomeExtractor.apply(dto));
+//			continue;
+//		}
+//
+//		EntidadeCompostaId idAtual = idCreator.apply(dto, empresaAssociada);
+//		T_ENTITY entidade = entidadesExistentes.get(idAtual);
+//
+//		if (entidade != null) {
+//			entidade.setEmpresa(empresaAssociada);
+//			entityUpdater.accept(entidade, dto);
+//		} else {
+//			entidade = entityCreator.apply(dto, empresaAssociada);
+//		}
+//		loteParaSalvar.add(entidade);
+//
+//		// Verifica se o lote atingiu o tamanho máximo
+//		if (loteParaSalvar.size() == batchSizeSave) {
+//			repository.saveAll(loteParaSalvar);
+//			totalProcessado += loteParaSalvar.size();
+//			loteParaSalvar.clear(); // Limpa a lista para o próximo lote
+//			logger.info("... {} {} processados...", totalProcessado, entidadeNome);
+//		}
+//	}
+//
+//	// Salva o lote final (caso o número total de itens não seja múltiplo do
+//	// batchSizeSave)
+//	if (!loteParaSalvar.isEmpty()) {
+//		repository.saveAll(loteParaSalvar);
+//		totalProcessado += loteParaSalvar.size();
+//	}
+//
+//	logger.info("Sincronização de {} concluída. {} registros processados no total.", entidadeNome, totalProcessado);
+//}

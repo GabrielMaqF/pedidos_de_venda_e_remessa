@@ -4,7 +4,6 @@ import java.io.Serializable;
 
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.base.BaseComposedEntity;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.id.EntidadeCompostaId;
-import com.automatizacoes_java.pedidos_de_venda_e_remessa.microsoft.sharepoint.dto.VendedorSharepointDTO;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.dto.vendedor.VendedorOmieDTO;
 
 import jakarta.persistence.Entity;
@@ -47,18 +46,18 @@ public class VendedorEntity extends BaseComposedEntity<Long> implements Serializ
 		this.setInativo(dto.getInativo());
 	}
 	
-	public VendedorEntity(VendedorSharepointDTO dto, EmpresaEntity e) {
-		this.setSharepointId(dto.getId());
-		this.setCodigo(dto.getCodigo());
-		this.setId(new EntidadeCompostaId(String.valueOf(dto.getCodigo()), e.getCodigo()));
-		this.setEmpresa(e);
-
-		this.atualizarDados(dto);
-	}
-
-	public void atualizarDados(VendedorSharepointDTO dto) {
-		this.setNome(dto.getNome());
-		this.setInativo(dto.isInativo());
-	}
-
 }
+//	public VendedorEntity(VendedorSharepointDTO dto, EmpresaEntity e) {
+//		this.setSharepointId(dto.getId());
+//		this.setCodigo(dto.getCodigo());
+//		this.setId(new EntidadeCompostaId(String.valueOf(dto.getCodigo()), e.getCodigo()));
+//		this.setEmpresa(e);
+//
+//		this.atualizarDados(dto);
+//	}
+//
+//	public void atualizarDados(VendedorSharepointDTO dto) {
+//		this.setNome(dto.getNome());
+//		this.setInativo(dto.isInativo());
+//	}
+
