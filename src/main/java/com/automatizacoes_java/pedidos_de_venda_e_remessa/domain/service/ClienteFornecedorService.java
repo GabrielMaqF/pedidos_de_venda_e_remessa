@@ -3,11 +3,11 @@ package com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.ClienteFornecedorEntity;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.EmpresaEntity;
-import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.cliente_fornecedor.ClienteFornecedorEntity;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.id.EntidadeCompostaId;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.repository.ClienteFornecedorRepository;
-import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.dto.cliente.ClienteOmieDTO;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.dto.ClienteOmieDTO;
 
 import jakarta.transaction.Transactional;
 

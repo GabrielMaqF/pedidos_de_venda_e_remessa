@@ -7,7 +7,7 @@ import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.Empres
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.ProjetoEntity;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.id.EntidadeCompostaId;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.repository.ProjetoRepository;
-import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.dto.projeto.ProjetoOmieDTO;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.dto.ProjetoOmieDTO;
 
 import jakarta.transaction.Transactional;
 

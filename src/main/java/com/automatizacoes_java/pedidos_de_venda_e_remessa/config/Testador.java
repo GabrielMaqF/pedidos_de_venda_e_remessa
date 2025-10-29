@@ -7,15 +7,15 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 
-import com.automatizacoes_java.pedidos_de_venda_e_remessa.application.service.SincronizacaoService;
+//import com.automatizacoes_java.pedidos_de_venda_e_remessa.application.service.SincronizacaoService;
 
 @Configuration
 @Profile("test")
 public class Testador implements CommandLineRunner {
 	private static final Logger logger = LoggerFactory.getLogger(Testador.class);
 
-	@Autowired
-	SincronizacaoService sincronizacaoService;
+//	@Autowired
+//	SincronizacaoService sincronizacaoService;
 
 	// --- DEPENDÊNCIAS ADICIONADAS PARA O TESTE OMIE ---
 //	@Autowired

@@ -2,7 +2,7 @@ package com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.response;
 
 import java.util.List;
 
-import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.dto.listar_ordem_servico.OrdemServicoDTO;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.dto.OrdemServicoDTO;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 

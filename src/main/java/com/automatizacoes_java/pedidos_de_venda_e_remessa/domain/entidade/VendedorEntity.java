@@ -4,7 +4,7 @@ import java.io.Serializable;
 
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.base.BaseComposedEntity;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.id.EntidadeCompostaId;
-import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.dto.vendedor.VendedorOmieDTO;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.dto.VendedorOmieDTO;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
