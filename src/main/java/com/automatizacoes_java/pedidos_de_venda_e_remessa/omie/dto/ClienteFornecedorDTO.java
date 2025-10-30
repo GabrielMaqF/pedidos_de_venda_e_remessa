@@ -101,7 +101,7 @@ public class ClienteFornecedorDTO {
 	@Data
 	@NoArgsConstructor
 	@JsonIgnoreProperties(ignoreUnknown = true)
-	public class DadosBancariosClienteFornecedorOmieDTO {
+	public static class DadosBancariosClienteFornecedorOmieDTO {
 
 		private String agencia;
 
@@ -128,7 +128,7 @@ public class ClienteFornecedorDTO {
 	@Data
 	@NoArgsConstructor
 	@JsonIgnoreProperties(ignoreUnknown = true)
-	public class EnderecoEntregaClienteFornecedorOmieDTO {
+	public static class EnderecoEntregaClienteFornecedorOmieDTO {
 
 		@JsonProperty("entBairro")
 		private String entBairro;
@@ -161,7 +161,7 @@ public class ClienteFornecedorDTO {
 	@Data
 	@NoArgsConstructor
 	@JsonIgnoreProperties(ignoreUnknown = true)
-	public class InfoClienteFornecedorOmieDTO {
+	public static class InfoClienteFornecedorOmieDTO {
 
 		@JsonProperty("cImpAPI")
 		@JsonDeserialize(using = StringToBooleanDeserializer.class)
@@ -189,7 +189,7 @@ public class ClienteFornecedorDTO {
 	@Data
 	@NoArgsConstructor
 	@JsonIgnoreProperties(ignoreUnknown = true)
-	public class RecomendacoesClienteFornecedorOmieDTO {
+	public static class RecomendacoesClienteFornecedorOmieDTO {
 
 		@JsonProperty("gerar_boletos")
 		@JsonDeserialize(using = StringToBooleanDeserializer.class)
@@ -208,7 +208,7 @@ public class ClienteFornecedorDTO {
 	@Data
 	@NoArgsConstructor
 	@JsonIgnoreProperties(ignoreUnknown = true)
-	public class TagClienteFornecedorOmieDTO {
+	public static class TagClienteFornecedorOmieDTO {
 		private String tag;
 	}
 }

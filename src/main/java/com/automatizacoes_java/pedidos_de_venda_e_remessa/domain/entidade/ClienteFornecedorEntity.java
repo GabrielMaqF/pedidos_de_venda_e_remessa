@@ -196,7 +196,7 @@ public class ClienteFornecedorEntity extends BaseComposedEntity<Long>
 	@Getter
 	@Setter
 	@NoArgsConstructor
-	public class DadosBancariosClienteFornecedorEntity implements Serializable {
+	public static class DadosBancariosClienteFornecedorEntity implements Serializable {
 		private static final long serialVersionUID = 1L;
 
 		@Id
@@ -223,7 +223,7 @@ public class ClienteFornecedorEntity extends BaseComposedEntity<Long>
 	@Getter
 	@Setter
 	@NoArgsConstructor
-	public class EnderecoEntregaClienteFornecedorEntity implements Serializable {
+	public static class EnderecoEntregaClienteFornecedorEntity implements Serializable {
 		private static final long serialVersionUID = 1L;
 
 		@Id
@@ -251,7 +251,7 @@ public class ClienteFornecedorEntity extends BaseComposedEntity<Long>
 	@Getter
 	@Setter
 	@NoArgsConstructor
-	public class InfoClienteFornecedorEntity implements Serializable {
+	public static class InfoClienteFornecedorEntity implements Serializable {
 		private static final long serialVersionUID = 1L;
 
 		@Id
@@ -277,7 +277,7 @@ public class ClienteFornecedorEntity extends BaseComposedEntity<Long>
 	@Getter
 	@Setter
 	@NoArgsConstructor
-	public class RecomendacoesClienteFornecedorEntity implements Serializable {
+	public static class RecomendacoesClienteFornecedorEntity implements Serializable {
 		private static final long serialVersionUID = 1L;
 
 		@Id
@@ -300,7 +300,7 @@ public class ClienteFornecedorEntity extends BaseComposedEntity<Long>
 	@Getter
 	@Setter
 	@NoArgsConstructor
-	public class TagClienteFornecedorEntity implements Serializable {
+	public static class TagClienteFornecedorEntity implements Serializable {
 		private static final long serialVersionUID = 1L;
 
 		@Id
