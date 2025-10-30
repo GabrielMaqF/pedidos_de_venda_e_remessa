@@ -10,7 +10,7 @@ import lombok.Data;
  */
 @Data
 @AllArgsConstructor
-public class ListarOsParamsDTO {
+public class ListarOsParamsDTO{
 
 	@JsonProperty("pagina")
 	private int pagina;

@@ -13,7 +13,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ClienteOmieDTO {
+public class ClienteFornecedorDTO {
 
 	private String bairro;
 	private String cep;
@@ -44,12 +44,12 @@ public class ClienteOmieDTO {
 	private String complemento;
 
 	@JsonProperty("dadosBancarios")
-	private DadosBancariosClienteOmieDTO dadosBancarios;
+	private DadosBancariosClienteFornecedorOmieDTO dadosBancarios;
 
 	private String endereco;
 
 	@JsonProperty("enderecoEntrega")
-	private EnderecoEntregaClienteOmieDTO enderecoEntrega;
+	private EnderecoEntregaClienteFornecedorOmieDTO enderecoEntrega;
 
 	@JsonProperty("endereco_numero")
 	private String enderecoNumero;
@@ -66,7 +66,7 @@ public class ClienteOmieDTO {
 	@JsonDeserialize(using = StringToBooleanDeserializer.class)
 	private Boolean inativo;
 
-	private InfoClienteOmieDTO info;
+	private InfoClienteFornecedorOmieDTO info;
 
 	@JsonProperty("inscricao_estadual")
 	private String inscricaoEstadual;
@@ -84,9 +84,9 @@ public class ClienteOmieDTO {
 	@JsonProperty("razao_social")
 	private String razaoSocial;
 
-	private RecomendacoesClienteOmieDTO recomendacoes;
+	private RecomendacoesClienteFornecedorOmieDTO recomendacoes;
 
-	private List<TagClienteOmieDTO> tags;
+	private List<TagClienteFornecedorOmieDTO> tags;
 
 	@JsonProperty("telefone1_ddd")
 	private String telefone1Ddd;
@@ -101,7 +101,7 @@ public class ClienteOmieDTO {
 	@Data
 	@NoArgsConstructor
 	@JsonIgnoreProperties(ignoreUnknown = true)
-	public class DadosBancariosClienteOmieDTO {
+	public class DadosBancariosClienteFornecedorOmieDTO {
 
 		private String agencia;
 
@@ -128,7 +128,7 @@ public class ClienteOmieDTO {
 	@Data
 	@NoArgsConstructor
 	@JsonIgnoreProperties(ignoreUnknown = true)
-	public class EnderecoEntregaClienteOmieDTO {
+	public class EnderecoEntregaClienteFornecedorOmieDTO {
 
 		@JsonProperty("entBairro")
 		private String entBairro;
@@ -161,7 +161,7 @@ public class ClienteOmieDTO {
 	@Data
 	@NoArgsConstructor
 	@JsonIgnoreProperties(ignoreUnknown = true)
-	public class InfoClienteOmieDTO {
+	public class InfoClienteFornecedorOmieDTO {
 
 		@JsonProperty("cImpAPI")
 		@JsonDeserialize(using = StringToBooleanDeserializer.class)
@@ -189,7 +189,7 @@ public class ClienteOmieDTO {
 	@Data
 	@NoArgsConstructor
 	@JsonIgnoreProperties(ignoreUnknown = true)
-	public class RecomendacoesClienteOmieDTO {
+	public class RecomendacoesClienteFornecedorOmieDTO {
 
 		@JsonProperty("gerar_boletos")
 		@JsonDeserialize(using = StringToBooleanDeserializer.class)
@@ -208,7 +208,7 @@ public class ClienteOmieDTO {
 	@Data
 	@NoArgsConstructor
 	@JsonIgnoreProperties(ignoreUnknown = true)
-	public class TagClienteOmieDTO {
+	public class TagClienteFornecedorOmieDTO {
 		private String tag;
 	}
 }

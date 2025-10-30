@@ -13,7 +13,7 @@ public class OmieWebhookHandlerFactory {
 	private final Map<String, OmieWebhookHandler> handlers;
 
 	public OmieWebhookHandlerFactory(List<OmieWebhookHandler> handlerList) {
-		System.out.println("Handler List:\t" + handlerList);
+//		System.out.println("Handler List:\t" + handlerList);
 		this.handlers = handlerList.stream()
 				.collect(Collectors.toMap(OmieWebhookHandler::getTopicName, Function.identity()));
 	}

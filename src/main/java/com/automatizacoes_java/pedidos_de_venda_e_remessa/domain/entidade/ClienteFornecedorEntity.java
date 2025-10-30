@@ -9,12 +9,12 @@ import java.util.stream.Collectors;
 
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.base.BaseComposedEntity;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.id.EntidadeCompostaId;
-import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.dto.ClienteOmieDTO;
-import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.dto.ClienteOmieDTO.DadosBancariosClienteOmieDTO;
-import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.dto.ClienteOmieDTO.EnderecoEntregaClienteOmieDTO;
-import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.dto.ClienteOmieDTO.InfoClienteOmieDTO;
-import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.dto.ClienteOmieDTO.RecomendacoesClienteOmieDTO;
-import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.dto.ClienteOmieDTO.TagClienteOmieDTO;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.dto.ClienteFornecedorDTO;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.dto.ClienteFornecedorDTO.DadosBancariosClienteFornecedorOmieDTO;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.dto.ClienteFornecedorDTO.EnderecoEntregaClienteFornecedorOmieDTO;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.dto.ClienteFornecedorDTO.InfoClienteFornecedorOmieDTO;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.dto.ClienteFornecedorDTO.RecomendacoesClienteFornecedorOmieDTO;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.dto.ClienteFornecedorDTO.TagClienteFornecedorOmieDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.AttributeOverride;
@@ -45,23 +45,23 @@ import lombok.ToString;
 //@ToString(callSuper = true)
 @ToString(callSuper = true, exclude = { "tags", "dadosBancarios", "info", "recomendacoes", "enderecoEntrega" })
 public class ClienteFornecedorEntity extends BaseComposedEntity<Long>
-		implements Serializable, BaseAtualizarDados<ClienteOmieDTO> {
+		implements Serializable, BaseAtualizarDados<ClienteFornecedorDTO> {
 	private static final long serialVersionUID = 1L;
 
-	@OneToOne(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-	private DadosBancariosClienteEntity dadosBancarios;
+	@OneToOne(mappedBy = "clienteFornecedor", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	private DadosBancariosClienteFornecedorEntity dadosBancarios;
 
-	@OneToOne(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-	private InfoClienteEntity info;
+	@OneToOne(mappedBy = "clienteFornecedor", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	private InfoClienteFornecedorEntity info;
 
-	@OneToOne(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-	private RecomendacoesClienteEntity recomendacoes;
+	@OneToOne(mappedBy = "clienteFornecedor", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	private RecomendacoesClienteFornecedorEntity recomendacoes;
 
-	@OneToOne(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-	private EnderecoEntregaClienteEntity enderecoEntrega;
+	@OneToOne(mappedBy = "clienteFornecedor", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	private EnderecoEntregaClienteFornecedorEntity enderecoEntrega;
 
-	@OneToMany(mappedBy = "cliente", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
-	private Set<TagClienteEntity> tags = new HashSet<>();
+	@OneToMany(mappedBy = "clienteFornecedor", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+	private Set<TagClienteFornecedorEntity> tags = new HashSet<>();
 
 	@Column(name = "email", length = 500)
 	private String email;
@@ -78,7 +78,7 @@ public class ClienteFornecedorEntity extends BaseComposedEntity<Long>
 	private String codigoIntegracao, nomeFantasia, cnpj, cidade, bairro, estado, cep, telefone, enderecoNumero,
 			complemento, inscricaoEstadual, inscricaoMunicipal, cnae;
 
-	public ClienteFornecedorEntity(ClienteOmieDTO dto, EmpresaEntity e) {
+	public ClienteFornecedorEntity(ClienteFornecedorDTO dto, EmpresaEntity e) {
 		this.setId(new EntidadeCompostaId(String.valueOf(dto.getCodigoClienteOmie()), e.getCodigo()));
 		this.setEmpresa(e);
 		this.setCodigo(dto.getCodigoClienteOmie());
@@ -88,7 +88,7 @@ public class ClienteFornecedorEntity extends BaseComposedEntity<Long>
 	}
 
 	@Override
-	public void atualizarDados(ClienteOmieDTO dto) {
+	public void atualizarDados(ClienteFornecedorDTO dto) {
 		// Mapeamento dos campos simples
 		this.setNome(dto.getRazaoSocial());
 		this.nomeFantasia = dto.getNomeFantasia();
@@ -117,11 +117,11 @@ public class ClienteFornecedorEntity extends BaseComposedEntity<Long>
 		atualizarTags(dto.getTags());
 	}
 
-	private void atualizarDadosBancarios(DadosBancariosClienteOmieDTO dto) {
+	private void atualizarDadosBancarios(DadosBancariosClienteFornecedorOmieDTO dto) {
 		if (dto != null) {
 			if (this.dadosBancarios == null) {
-				this.dadosBancarios = new DadosBancariosClienteEntity();
-				this.dadosBancarios.setCliente(this);
+				this.dadosBancarios = new DadosBancariosClienteFornecedorEntity();
+				this.dadosBancarios.setClienteFornecedor(this);
 			}
 			this.dadosBancarios.setAgencia(dto.getAgencia());
 			this.dadosBancarios.setChavePix(dto.getChavePix());
@@ -133,11 +133,11 @@ public class ClienteFornecedorEntity extends BaseComposedEntity<Long>
 		}
 	}
 
-	private void atualizarInfo(InfoClienteOmieDTO dto) {
+	private void atualizarInfo(InfoClienteFornecedorOmieDTO dto) {
 		if (dto != null) {
 			if (this.info == null) {
-				this.info = new InfoClienteEntity();
-				this.info.setCliente(this);
+				this.info = new InfoClienteFornecedorEntity();
+				this.info.setClienteFornecedor(this);
 			}
 			this.info.setCImpAPI(dto.getCImpAPI());
 			this.info.setDAlt(dto.getDAlt());
@@ -149,11 +149,11 @@ public class ClienteFornecedorEntity extends BaseComposedEntity<Long>
 		}
 	}
 
-	private void atualizarRecomendacoes(RecomendacoesClienteOmieDTO dto) {
+	private void atualizarRecomendacoes(RecomendacoesClienteFornecedorOmieDTO dto) {
 		if (dto != null) {
 			if (this.recomendacoes == null) {
-				this.recomendacoes = new RecomendacoesClienteEntity();
-				this.recomendacoes.setCliente(this);
+				this.recomendacoes = new RecomendacoesClienteFornecedorEntity();
+				this.recomendacoes.setClienteFornecedor(this);
 			}
 			this.recomendacoes.setGerarBoletos(dto.getGerarBoletos());
 			this.recomendacoes.setTipoAssinante(dto.getTipoAssinante());
@@ -162,11 +162,11 @@ public class ClienteFornecedorEntity extends BaseComposedEntity<Long>
 		}
 	}
 
-	private void atualizarEnderecoEntrega(EnderecoEntregaClienteOmieDTO dto) {
+	private void atualizarEnderecoEntrega(EnderecoEntregaClienteFornecedorOmieDTO dto) {
 		if (dto != null) {
 			if (this.enderecoEntrega == null) {
-				this.enderecoEntrega = new EnderecoEntregaClienteEntity();
-				this.enderecoEntrega.setCliente(this);
+				this.enderecoEntrega = new EnderecoEntregaClienteFornecedorEntity();
+				this.enderecoEntrega.setClienteFornecedor(this);
 			}
 			this.enderecoEntrega.setEntBairro(dto.getEntBairro());
 			this.enderecoEntrega.setEntCEP(dto.getEntCEP());
@@ -180,23 +180,23 @@ public class ClienteFornecedorEntity extends BaseComposedEntity<Long>
 		}
 	}
 
-	private void atualizarTags(List<TagClienteOmieDTO> tagsDto) {
+	private void atualizarTags(List<TagClienteFornecedorOmieDTO> tagsDto) {
 		if (tagsDto != null) {
 			this.tags.clear(); // Limpa a lista antiga
 
-			Set<TagClienteEntity> novasTags = tagsDto.stream()
-					.map(tagDto -> new TagClienteEntity(tagDto.getTag(), this)).collect(Collectors.toSet());
+			Set<TagClienteFornecedorEntity> novasTags = tagsDto.stream()
+					.map(tagDto -> new TagClienteFornecedorEntity(tagDto.getTag(), this)).collect(Collectors.toSet());
 
 			this.tags.addAll(novasTags); // Adiciona as novas tags
 		}
 	}
 
 	@Entity
-	@Table(name = "cliente_dados_bancarios")
+	@Table(name = "cliente_fornecedor_dados_bancarios")
 	@Getter
 	@Setter
 	@NoArgsConstructor
-	public class DadosBancariosClienteEntity implements Serializable {
+	public class DadosBancariosClienteFornecedorEntity implements Serializable {
 		private static final long serialVersionUID = 1L;
 
 		@Id
@@ -212,18 +212,18 @@ public class ClienteFornecedorEntity extends BaseComposedEntity<Long>
 		private Boolean transfPadrao;
 
 		@OneToOne
-		@JoinColumns({ @JoinColumn(name = "cliente_codigo", referencedColumnName = "codigo"),
+		@JoinColumns({ @JoinColumn(name = "cliente_fornecedor_codigo", referencedColumnName = "codigo"),
 				@JoinColumn(name = "empresa_codigo", referencedColumnName = "empresa_codigo") })
-		private ClienteFornecedorEntity cliente;
+		private ClienteFornecedorEntity clienteFornecedor;
 
 	}
 
 	@Entity
-	@Table(name = "cliente_endereco_entrega")
+	@Table(name = "cliente_fornecedor_endereco_entrega")
 	@Getter
 	@Setter
 	@NoArgsConstructor
-	public class EnderecoEntregaClienteEntity implements Serializable {
+	public class EnderecoEntregaClienteFornecedorEntity implements Serializable {
 		private static final long serialVersionUID = 1L;
 
 		@Id
@@ -241,17 +241,17 @@ public class ClienteFornecedorEntity extends BaseComposedEntity<Long>
 		private String entRazaoSocial;
 
 		@OneToOne
-		@JoinColumns({ @JoinColumn(name = "cliente_codigo", referencedColumnName = "codigo"),
+		@JoinColumns({ @JoinColumn(name = "cliente_fornecedor_codigo", referencedColumnName = "codigo"),
 				@JoinColumn(name = "empresa_codigo", referencedColumnName = "empresa_codigo") })
-		private ClienteFornecedorEntity cliente;
+		private ClienteFornecedorEntity clienteFornecedor;
 	}
 
 	@Entity
-	@Table(name = "cliente_info")
+	@Table(name = "cliente_fornecedor_info")
 	@Getter
 	@Setter
 	@NoArgsConstructor
-	public class InfoClienteEntity implements Serializable {
+	public class InfoClienteFornecedorEntity implements Serializable {
 		private static final long serialVersionUID = 1L;
 
 		@Id
@@ -267,17 +267,17 @@ public class ClienteFornecedorEntity extends BaseComposedEntity<Long>
 		private String uInc;
 
 		@OneToOne
-		@JoinColumns({ @JoinColumn(name = "cliente_codigo", referencedColumnName = "codigo"),
+		@JoinColumns({ @JoinColumn(name = "cliente_fornecedor_codigo", referencedColumnName = "codigo"),
 				@JoinColumn(name = "empresa_codigo", referencedColumnName = "empresa_codigo") })
-		private ClienteFornecedorEntity cliente;
+		private ClienteFornecedorEntity clienteFornecedor;
 	}
 
 	@Entity
-	@Table(name = "cliente_recomendacoes")
+	@Table(name = "cliente_fornecedor_recomendacoes")
 	@Getter
 	@Setter
 	@NoArgsConstructor
-	public class RecomendacoesClienteEntity implements Serializable {
+	public class RecomendacoesClienteFornecedorEntity implements Serializable {
 		private static final long serialVersionUID = 1L;
 
 		@Id
@@ -290,17 +290,17 @@ public class ClienteFornecedorEntity extends BaseComposedEntity<Long>
 		private String numeroParcelas;
 
 		@OneToOne
-		@JoinColumns({ @JoinColumn(name = "cliente_codigo", referencedColumnName = "codigo"),
+		@JoinColumns({ @JoinColumn(name = "cliente_fornecedor_codigo", referencedColumnName = "codigo"),
 				@JoinColumn(name = "empresa_codigo", referencedColumnName = "empresa_codigo") })
-		private ClienteFornecedorEntity cliente;
+		private ClienteFornecedorEntity clienteFornecedor;
 	}
 
 	@Entity
-	@Table(name = "cliente_tags") // Tabela específica para as tags de clientes
+	@Table(name = "cliente_fornecedor_tags") // Tabela específica para as tags de clientes
 	@Getter
 	@Setter
 	@NoArgsConstructor
-	public class TagClienteEntity implements Serializable {
+	public class TagClienteFornecedorEntity implements Serializable {
 		private static final long serialVersionUID = 1L;
 
 		@Id
@@ -312,15 +312,15 @@ public class ClienteFornecedorEntity extends BaseComposedEntity<Long>
 
 		// Relacionamento de volta para o cliente (lado "Muitos" da relação)
 		@ManyToOne(fetch = FetchType.LAZY)
-		@JoinColumns({ @JoinColumn(name = "cliente_codigo", referencedColumnName = "codigo"),
+		@JoinColumns({ @JoinColumn(name = "cliente_fornecedor_codigo", referencedColumnName = "codigo"),
 				@JoinColumn(name = "empresa_codigo", referencedColumnName = "empresa_codigo") })
 		@JsonIgnore // Evita loops infinitos na serialização JSON
-		private ClienteFornecedorEntity cliente;
+		private ClienteFornecedorEntity clienteFornecedor;
 
 		// Construtor para facilitar a criação
-		public TagClienteEntity(String nome, ClienteFornecedorEntity cliente) {
+		public TagClienteFornecedorEntity(String nome, ClienteFornecedorEntity clienteFornecedor) {
 			this.nome = nome;
-			this.cliente = cliente;
+			this.clienteFornecedor = clienteFornecedor;
 		}
 
 		// Implementação robusta de equals e hashCode baseada no ID
@@ -330,7 +330,7 @@ public class ClienteFornecedorEntity extends BaseComposedEntity<Long>
 				return true;
 			if (o == null || getClass() != o.getClass())
 				return false;
-			TagClienteEntity that = (TagClienteEntity) o;
+			TagClienteFornecedorEntity that = (TagClienteFornecedorEntity) o;
 			// Se o ID for nulo, as entidades não podem ser consideradas iguais.
 			if (this.id == null || that.id == null)
 				return false;
