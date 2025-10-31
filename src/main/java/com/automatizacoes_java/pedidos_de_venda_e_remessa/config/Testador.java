@@ -15,7 +15,11 @@ import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.Empres
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.service.ClienteFornecedorService;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.service.EmpresaService;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.service.ProjetoService;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.service.VendedorService;
 
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
 @Configuration
 @Profile("test")
 public class Testador implements CommandLineRunner {
@@ -24,12 +28,7 @@ public class Testador implements CommandLineRunner {
 	private final EmpresaService eService;
 	private final ClienteFornecedorService cfService;
 	private final ProjetoService pjService;
-
-	public Testador(EmpresaService eService, ClienteFornecedorService cfService, ProjetoService pjService) {
-		this.eService = eService;
-		this.cfService = cfService;
-		this.pjService = pjService;
-	}
+	private final VendedorService vdService;
 
 	@Override
 	public void run(String... args) {
@@ -48,7 +47,8 @@ public class Testador implements CommandLineRunner {
 		}
 
 //        checkClienteFornecedor(le); 
-		checkProjeto(le);
+//		checkProjeto(le);
+		checkVendedor(le);
 
 	}
 
@@ -72,6 +72,23 @@ public class Testador implements CommandLineRunner {
 	@Async
 	public void checkProjeto(List<EmpresaEntity> le) {
 		CompletableFuture<ResponseEntity<?>> fut = pjService.getAllOmieUpdateBDA();
+
+		fut.whenComplete((res, ex) -> {
+			if (ex != null) {
+				logger.error("Falha no getAllOmieUpdateBDA: {}", ex.toString(), ex);
+				return;
+			}
+			if (res != null) {
+				logger.info("STATUS: {} | BODY: {}", res.getStatusCode(), res.getBody());
+			} else {
+				logger.warn("Future completou, mas o ResponseEntity veio null");
+			}
+		}).join(); // aguarda para garantir que o log apareça no startup
+	}
+
+	@Async
+	public void checkVendedor(List<EmpresaEntity> le) {
+		CompletableFuture<ResponseEntity<?>> fut = vdService.getAllOmieUpdateBDA();
 
 		fut.whenComplete((res, ex) -> {
 			if (ex != null) {

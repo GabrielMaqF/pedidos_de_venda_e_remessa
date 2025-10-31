@@ -57,8 +57,8 @@ public class ViewRelatorioOrdemServicoInitializer {
                     log.warn("Tabela {}.{} encontrada. Dropando para recriar como VIEW...", SCHEMA, VIEW);
                     jdbc.execute("drop table " + SCHEMA + "." + VIEW + " cascade");
                 } else {
-                    log.error("Já existe uma TABELA {}.{}. A view não será criada. "
-                            + "Ative app.view.force-drop-table=true ou remova/renomeie a tabela.", SCHEMA, VIEW);
+//                    log.error("Já existe uma TABELA {}.{}. A view não será criada. "
+//                            + "Ative app.view.force-drop-table=true ou remova/renomeie a tabela.", SCHEMA, VIEW);
                     return;
                 }
             }

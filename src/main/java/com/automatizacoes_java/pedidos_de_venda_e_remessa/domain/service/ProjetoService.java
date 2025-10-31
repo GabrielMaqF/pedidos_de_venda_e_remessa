@@ -57,8 +57,7 @@ public class ProjetoService extends BaseService<ProjetoEntity, EntidadeCompostaI
 			try {
 				Thread.sleep(1000L);
 				do {
-					OmieListarProjetoResponse res = omieApiClientService
-							.listarProjetoPorPagina(e, paginaAtual).get();
+					OmieListarProjetoResponse res = omieApiClientService.listarProjetoPorPagina(e, paginaAtual).get();
 
 					if (res == null || res.getCadastro().isEmpty())
 						break;
@@ -73,7 +72,7 @@ public class ProjetoService extends BaseService<ProjetoEntity, EntidadeCompostaI
 					System.out.printf("Empresa:\t%s\t|\tPagina:\t%d\t|\tTotalPagina:\t%d\t|\tTotalRegistros:\t%d%n",
 							e.getNomeFantasia(), paginaAtual, totalPaginas, totalRegistros);
 
-					paginaAtual++; 
+					paginaAtual++;
 				} while (paginaAtual <= totalPaginas);
 			} catch (InterruptedException | ExecutionException e1) {
 				// TODO Auto-generated catch block

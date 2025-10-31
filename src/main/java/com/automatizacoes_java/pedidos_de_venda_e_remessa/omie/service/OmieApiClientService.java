@@ -25,6 +25,7 @@ import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.response.OmieList
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.response.OmieListarProjetoResponse;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.response.OmieListarServicosResponse;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.response.OmieListarTiposFaturamentoResponse;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.response.OmieListarVendedorResponse;
 
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -47,24 +48,33 @@ public class OmieApiClientService {
 		this.webClient = webClientBuilder.baseUrl(omieProperties.getUrl()).build();
 	}
 
-	public CompletableFuture<OmieListarProjetoResponse> listarProjetoPorPagina(
-			EmpresaEntity empresa, int pagina) {
+	public CompletableFuture<OmieListarVendedorResponse> listarVendedorPorPagina(EmpresaEntity empresa, int pagina) {
+		var params = Map.of("pagina", pagina, "registros_por_pagina", REGISTROS_POR_PAGINA, "apenas_importado_api",
+				"N");
+		var payload = new OmieRequestPayload<>("ListarVendedores", empresa.getAppKey(), empresa.getAppSecret(),
+				List.of(params));
+
+		return webClient.post().uri("/geral/vendedores/").bodyValue(payload).retrieve()
+				.bodyToMono(OmieListarVendedorResponse.class).onErrorResume(WebClientResponseException.class, ex -> {
+					handleApiError(ex, "Cliente Fornecedor", empresa.getNomeFantasia(), pagina);
+					return Mono.just(createEmptyVendedorResponse(pagina));
+				}).toFuture();
+	}
+
+	public CompletableFuture<OmieListarProjetoResponse> listarProjetoPorPagina(EmpresaEntity empresa, int pagina) {
 		var params = Map.of("pagina", pagina, "registros_por_pagina", REGISTROS_POR_PAGINA, "apenas_importado_api",
 				"N");
 		var payload = new OmieRequestPayload<>("ListarProjetos", empresa.getAppKey(), empresa.getAppSecret(),
 				List.of(params));
 
 		return webClient.post().uri("/geral/projetos/").bodyValue(payload).retrieve()
-				.bodyToMono(OmieListarProjetoResponse.class)
-				.onErrorResume(WebClientResponseException.class, ex -> {
+				.bodyToMono(OmieListarProjetoResponse.class).onErrorResume(WebClientResponseException.class, ex -> {
 					handleApiError(ex, "Cliente Fornecedor", empresa.getNomeFantasia(), pagina);
 					return Mono.just(createEmptyProjetoResponse(pagina));
 				}).toFuture();
-
 	}
-	
-	public CompletableFuture<OmieListarClienteFornecedorResponse> listarClienteFornecedorPorPagina(
-			EmpresaEntity empresa, int pagina) {
+
+	public CompletableFuture<OmieListarClienteFornecedorResponse> listarClienteFornecedorPorPagina(EmpresaEntity empresa, int pagina) {
 		var params = Map.of("pagina", pagina, "registros_por_pagina", REGISTROS_POR_PAGINA, "apenas_importado_api",
 				"N");
 		var payload = new OmieRequestPayload<>("ListarClientes", empresa.getAppKey(), empresa.getAppSecret(),
@@ -76,7 +86,6 @@ public class OmieApiClientService {
 					handleApiError(ex, "Cliente Fornecedor", empresa.getNomeFantasia(), pagina);
 					return Mono.just(createEmptyClienteFornecedorResponse(pagina));
 				}).toFuture();
-
 	}
 
 	public CompletableFuture<OmieListarOsResponse> listarOsPorPagina(EmpresaEntity empresa, int pagina) {
@@ -159,7 +168,15 @@ public class OmieApiClientService {
 					ex.getStatusCode(), endpointName, companyName, page, ex.getResponseBodyAsString());
 		}
 	}
-	
+
+	private OmieListarVendedorResponse createEmptyVendedorResponse(int pagina) {
+		OmieListarVendedorResponse emptyResponse = new OmieListarVendedorResponse();
+		emptyResponse.setPagina(pagina);
+		emptyResponse.setTotalDePaginas(pagina - 1);
+		emptyResponse.setCadastro(Collections.emptyList());
+		return emptyResponse;
+	}
+
 	private OmieListarProjetoResponse createEmptyProjetoResponse(int pagina) {
 		OmieListarProjetoResponse emptyResponse = new OmieListarProjetoResponse();
 		emptyResponse.setPagina(pagina);
@@ -167,7 +184,7 @@ public class OmieApiClientService {
 		emptyResponse.setCadastro(Collections.emptyList());
 		return emptyResponse;
 	}
-	
+
 	private OmieListarClienteFornecedorResponse createEmptyClienteFornecedorResponse(int pagina) {
 		OmieListarClienteFornecedorResponse emptyResponse = new OmieListarClienteFornecedorResponse();
 		emptyResponse.setPagina(pagina);
