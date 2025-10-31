@@ -3,6 +3,8 @@ package com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade;
 import java.io.Serializable;
 
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.base.BaseComposedEntity;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.id.EntidadeCompostaId;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.dto.CategoriaDTO;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -33,20 +35,20 @@ public class CategoriaEntity extends BaseComposedEntity<String> implements Seria
 	@Column(name = "receita")
 	private boolean receita;
 
-//	public CategoriaEntity(CategoriaSharepointDTO dto, EmpresaEntity e) {
-//		this.setCodigo(dto.getCodigo());
-//		this.setId(new EntidadeCompostaId(String.valueOf(dto.getCodigo()), e.getCodigo()));
-//		this.setEmpresa(e);
-//
-//		this.atualizarDados(dto);
-//	}
-//
-//	public void atualizarDados(CategoriaSharepointDTO dto) {
-//		this.setInativo(dto.isInativo());
-//		this.setNome(dto.getDescricao());
-//		this.setTotalizadora(dto.isTotalizadora());
-//		this.setTransferencia(dto.isTransferencia());
-//		this.setDespesa(dto.isDespesa());
-//		this.setReceita(dto.isReceita());
-//	}
+	public CategoriaEntity(CategoriaDTO dto, EmpresaEntity e) {
+		this.setCodigo(dto.getCodigo());
+		this.setId(new EntidadeCompostaId(String.valueOf(dto.getCodigo()), e.getCodigo()));
+		this.setEmpresa(e);
+
+		this.atualizarDados(dto);
+	}
+
+	public void atualizarDados(CategoriaDTO dto) {
+		this.setInativo(dto.getInativo());
+		this.setNome(dto.getDescricao());
+		this.setTotalizadora(dto.getTotalizadora());
+		this.setTransferencia(dto.getTransferencia());
+		this.setDespesa(dto.getContaDespesa());
+		this.setReceita(dto.getContaReceita());
+	}
 }

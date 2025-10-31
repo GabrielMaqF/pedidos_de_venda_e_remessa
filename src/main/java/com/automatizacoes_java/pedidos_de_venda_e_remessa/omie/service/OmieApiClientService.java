@@ -17,9 +17,12 @@ import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.config.OmieProper
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.request.ListarOsParamsDTO;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.request.OmieRequestPayload;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.response.OmieFaultResponse;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.response.OmieListarCategoriaResponse;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.response.OmieListarClienteFornecedorResponse;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.response.OmieListarCnaeResponse;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.response.OmieListarContaCorrenteResponse;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.response.OmieListarContratosServicoResponse;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.response.OmieListarDepartamentoResponse;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.response.OmieListarNfseResponse;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.response.OmieListarOsResponse;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.response.OmieListarProjetoResponse;
@@ -48,6 +51,49 @@ public class OmieApiClientService {
 		this.webClient = webClientBuilder.baseUrl(omieProperties.getUrl()).build();
 	}
 
+	public CompletableFuture<OmieListarDepartamentoResponse> listarDepartamentoPorPagina(EmpresaEntity empresa,
+			int pagina) {
+		var params = Map.of("pagina", pagina, "registros_por_pagina", REGISTROS_POR_PAGINA, "apenas_importado_api",
+				"N");
+		var payload = new OmieRequestPayload<>("ListarDepartamentos", empresa.getAppKey(), empresa.getAppSecret(),
+				List.of(params));
+
+		return webClient.post().uri("/geral/departamentos/").bodyValue(payload).retrieve()
+				.bodyToMono(OmieListarDepartamentoResponse.class)
+				.onErrorResume(WebClientResponseException.class, ex -> {
+					handleApiError(ex, "Departamento", empresa.getNomeFantasia(), pagina);
+					return Mono.just(createEmptyDepartamentoResponse(pagina));
+				}).toFuture();
+	}
+
+	public CompletableFuture<OmieListarCategoriaResponse> listarCategoriaPorPagina(EmpresaEntity empresa, int pagina) {
+		var params = Map.of("pagina", pagina, "registros_por_pagina", REGISTROS_POR_PAGINA, "apenas_importado_api",
+				"N");
+		var payload = new OmieRequestPayload<>("ListarCategorias", empresa.getAppKey(), empresa.getAppSecret(),
+				List.of(params));
+
+		return webClient.post().uri("/geral/categorias/").bodyValue(payload).retrieve()
+				.bodyToMono(OmieListarCategoriaResponse.class).onErrorResume(WebClientResponseException.class, ex -> {
+					handleApiError(ex, "Categoria", empresa.getNomeFantasia(), pagina);
+					return Mono.just(createEmptyCategoriaResponse(pagina));
+				}).toFuture();
+	}
+
+	public CompletableFuture<OmieListarContaCorrenteResponse> listarContaCorrentePorPagina(EmpresaEntity empresa,
+			int pagina) {
+		var params = Map.of("pagina", pagina, "registros_por_pagina", REGISTROS_POR_PAGINA, "apenas_importado_api",
+				"N");
+		var payload = new OmieRequestPayload<>("ListarResumoContasCorrentes", empresa.getAppKey(),
+				empresa.getAppSecret(), List.of(params));
+
+		return webClient.post().uri("/geral/contacorrente/").bodyValue(payload).retrieve()
+				.bodyToMono(OmieListarContaCorrenteResponse.class)
+				.onErrorResume(WebClientResponseException.class, ex -> {
+					handleApiError(ex, "Conta Corrente", empresa.getNomeFantasia(), pagina);
+					return Mono.just(createEmptyContaCorrenteResponse(pagina));
+				}).toFuture();
+	}
+
 	public CompletableFuture<OmieListarVendedorResponse> listarVendedorPorPagina(EmpresaEntity empresa, int pagina) {
 		var params = Map.of("pagina", pagina, "registros_por_pagina", REGISTROS_POR_PAGINA, "apenas_importado_api",
 				"N");
@@ -56,7 +102,7 @@ public class OmieApiClientService {
 
 		return webClient.post().uri("/geral/vendedores/").bodyValue(payload).retrieve()
 				.bodyToMono(OmieListarVendedorResponse.class).onErrorResume(WebClientResponseException.class, ex -> {
-					handleApiError(ex, "Cliente Fornecedor", empresa.getNomeFantasia(), pagina);
+					handleApiError(ex, "Vendedor", empresa.getNomeFantasia(), pagina);
 					return Mono.just(createEmptyVendedorResponse(pagina));
 				}).toFuture();
 	}
@@ -69,12 +115,13 @@ public class OmieApiClientService {
 
 		return webClient.post().uri("/geral/projetos/").bodyValue(payload).retrieve()
 				.bodyToMono(OmieListarProjetoResponse.class).onErrorResume(WebClientResponseException.class, ex -> {
-					handleApiError(ex, "Cliente Fornecedor", empresa.getNomeFantasia(), pagina);
+					handleApiError(ex, "Projeto", empresa.getNomeFantasia(), pagina);
 					return Mono.just(createEmptyProjetoResponse(pagina));
 				}).toFuture();
 	}
 
-	public CompletableFuture<OmieListarClienteFornecedorResponse> listarClienteFornecedorPorPagina(EmpresaEntity empresa, int pagina) {
+	public CompletableFuture<OmieListarClienteFornecedorResponse> listarClienteFornecedorPorPagina(
+			EmpresaEntity empresa, int pagina) {
 		var params = Map.of("pagina", pagina, "registros_por_pagina", REGISTROS_POR_PAGINA, "apenas_importado_api",
 				"N");
 		var payload = new OmieRequestPayload<>("ListarClientes", empresa.getAppKey(), empresa.getAppSecret(),
@@ -167,6 +214,30 @@ public class OmieApiClientService {
 			logger.error("API OMIE: Erro {} ao consultar {} para a empresa '{}', página {}. Resposta: {}",
 					ex.getStatusCode(), endpointName, companyName, page, ex.getResponseBodyAsString());
 		}
+	}
+
+	private OmieListarDepartamentoResponse createEmptyDepartamentoResponse(int pagina) {
+		OmieListarDepartamentoResponse emptyResponse = new OmieListarDepartamentoResponse();
+		emptyResponse.setPagina(pagina);
+		emptyResponse.setTotalDePaginas(pagina - 1);
+		emptyResponse.setDepartamentos(Collections.emptyList());
+		return emptyResponse;
+	}
+
+	private OmieListarCategoriaResponse createEmptyCategoriaResponse(int pagina) {
+		OmieListarCategoriaResponse emptyResponse = new OmieListarCategoriaResponse();
+		emptyResponse.setPagina(pagina);
+		emptyResponse.setTotalDePaginas(pagina - 1);
+		emptyResponse.setCategoriaCadastro(Collections.emptyList());
+		return emptyResponse;
+	}
+
+	private OmieListarContaCorrenteResponse createEmptyContaCorrenteResponse(int pagina) {
+		OmieListarContaCorrenteResponse emptyResponse = new OmieListarContaCorrenteResponse();
+		emptyResponse.setPagina(pagina);
+		emptyResponse.setTotalDePaginas(pagina - 1);
+		emptyResponse.setContaCorrenteLista(Collections.emptyList());
+		return emptyResponse;
 	}
 
 	private OmieListarVendedorResponse createEmptyVendedorResponse(int pagina) {

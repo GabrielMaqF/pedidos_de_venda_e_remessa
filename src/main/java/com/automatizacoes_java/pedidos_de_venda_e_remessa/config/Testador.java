@@ -12,7 +12,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Async;
 
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.EmpresaEntity;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.service.CategoriaService;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.service.ClienteFornecedorService;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.service.ContaCorrenteService;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.service.DepartamentoService;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.service.EmpresaService;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.service.ProjetoService;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.service.VendedorService;
@@ -29,6 +32,9 @@ public class Testador implements CommandLineRunner {
 	private final ClienteFornecedorService cfService;
 	private final ProjetoService pjService;
 	private final VendedorService vdService;
+	private final ContaCorrenteService ccService;
+	private final CategoriaService cgService;
+	private final DepartamentoService dpService;
 
 	@Override
 	public void run(String... args) {
@@ -46,10 +52,12 @@ public class Testador implements CommandLineRunner {
 			logger.info(e.toString());
 		}
 
-//        checkClienteFornecedor(le); 
+//      checkClienteFornecedor(le); 
 //		checkProjeto(le);
-		checkVendedor(le);
-
+//		checkVendedor(le);
+//		checkContaCorrente(le);
+//		checkCategoria(le);
+		checkDepartamento(le);
 	}
 
 	@Async
@@ -90,6 +98,57 @@ public class Testador implements CommandLineRunner {
 	public void checkVendedor(List<EmpresaEntity> le) {
 		CompletableFuture<ResponseEntity<?>> fut = vdService.getAllOmieUpdateBDA();
 
+		fut.whenComplete((res, ex) -> {
+			if (ex != null) {
+				logger.error("Falha no getAllOmieUpdateBDA: {}", ex.toString(), ex);
+				return;
+			}
+			if (res != null) {
+				logger.info("STATUS: {} | BODY: {}", res.getStatusCode(), res.getBody());
+			} else {
+				logger.warn("Future completou, mas o ResponseEntity veio null");
+			}
+		}).join(); // aguarda para garantir que o log apareça no startup
+	}
+	
+	@Async
+	public void checkContaCorrente(List<EmpresaEntity> le) {
+		CompletableFuture<ResponseEntity<?>> fut = ccService.getAllOmieUpdateBDA();
+
+		fut.whenComplete((res, ex) -> {
+			if (ex != null) {
+				logger.error("Falha no getAllOmieUpdateBDA: {}", ex.toString(), ex);
+				return;
+			}
+			if (res != null) {
+				logger.info("STATUS: {} | BODY: {}", res.getStatusCode(), res.getBody());
+			} else {
+				logger.warn("Future completou, mas o ResponseEntity veio null");
+			}
+		}).join(); // aguarda para garantir que o log apareça no startup
+	}
+
+	@Async
+	public void checkCategoria(List<EmpresaEntity> le) {
+		CompletableFuture<ResponseEntity<?>> fut = cgService.getAllOmieUpdateBDA();
+		
+		fut.whenComplete((res, ex) -> {
+			if (ex != null) {
+				logger.error("Falha no getAllOmieUpdateBDA: {}", ex.toString(), ex);
+				return;
+			}
+			if (res != null) {
+				logger.info("STATUS: {} | BODY: {}", res.getStatusCode(), res.getBody());
+			} else {
+				logger.warn("Future completou, mas o ResponseEntity veio null");
+			}
+		}).join(); // aguarda para garantir que o log apareça no startup
+	}
+	
+	@Async
+	public void checkDepartamento(List<EmpresaEntity> le) {
+		CompletableFuture<ResponseEntity<?>> fut = dpService.getAllOmieUpdateBDA();
+		
 		fut.whenComplete((res, ex) -> {
 			if (ex != null) {
 				logger.error("Falha no getAllOmieUpdateBDA: {}", ex.toString(), ex);
