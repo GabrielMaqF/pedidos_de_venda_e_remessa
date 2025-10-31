@@ -23,30 +23,25 @@ public class ProjetoService extends BaseService<ProjetoEntity, EntidadeCompostaI
 	@Autowired
 	ProjetoRepository repository;
 
-
 	@Autowired
 	OmieApiClientService omieApiClientService;
-
-	@Autowired
-	EmpresaService empresaService;
 
 	@Transactional
 	public ProjetoEntity criarOuAtualizarPorOmie(ProjetoDTO dto, EmpresaEntity empresa) {
 		EntidadeCompostaId id = new EntidadeCompostaId(String.valueOf(dto.getCodigo()), empresa.getCodigo());
-		
+
 		// Procura o cliente, se não existir, cria um novo
 		ProjetoEntity entidade = repository.findById(id).orElse(new ProjetoEntity(dto, empresa));
-		
+
 		// Atualiza os dados com as informações do DTO
 		entidade.atualizarDados(dto);
-		
+
 		// Salva e retorna a entidade gerenciada
 		return repository.save(entidade);
 	}
 
 	@Transactional
-	public CompletableFuture<ResponseEntity<?>> getAllOmieUpdateBDA() {
-		List<EmpresaEntity> empresas = empresaService.findAll();
+	public CompletableFuture<ResponseEntity<?>> getAllOmieUpdateBDA(List<EmpresaEntity> empresas) {
 
 		if (empresas.isEmpty())
 			return CompletableFuture.completedFuture(ResponseEntity.badRequest().body("Nenhuma Empresa Encontrada"));

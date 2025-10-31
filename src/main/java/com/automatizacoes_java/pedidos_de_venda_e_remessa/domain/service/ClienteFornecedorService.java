@@ -34,9 +34,6 @@ public class ClienteFornecedorService extends BaseService<ClienteFornecedorEntit
 	@Autowired
 	OmieApiClientService omieApiClientService;
 
-	@Autowired
-	EmpresaService empresaService;
-
 	@Transactional
 	public ClienteFornecedorEntity criarOuAtualizarPorOmie(ClienteFornecedorDTO dto, EmpresaEntity empresa) {
 		EntidadeCompostaId id = new EntidadeCompostaId(String.valueOf(dto.getCodigoClienteOmie()), empresa.getCodigo());
@@ -52,8 +49,7 @@ public class ClienteFornecedorService extends BaseService<ClienteFornecedorEntit
 	}
 
 	@Transactional
-	public CompletableFuture<ResponseEntity<?>> getAllOmieUpdateBDA() {
-		List<EmpresaEntity> empresas = empresaService.findAll();
+	public CompletableFuture<ResponseEntity<?>> getAllOmieUpdateBDA(List<EmpresaEntity> empresas) {
 
 		if (empresas.isEmpty())
 			return CompletableFuture.completedFuture(ResponseEntity.badRequest().body("Nenhuma Empresa Encontrada"));
@@ -80,7 +76,7 @@ public class ClienteFornecedorService extends BaseService<ClienteFornecedorEntit
 					System.out.printf("Empresa:\t%s\t|\tPagina:\t%d\t|\tTotalPagina:\t%d\t|\tTotalRegistros:\t%d%n",
 							e.getNomeFantasia(), paginaAtual, totalPaginas, totalRegistros);
 
-					paginaAtual++; 
+					paginaAtual++;
 				} while (paginaAtual <= totalPaginas);
 			} catch (InterruptedException | ExecutionException e1) {
 				// TODO Auto-generated catch block

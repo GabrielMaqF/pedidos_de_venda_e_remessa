@@ -34,9 +34,6 @@ public class VendedorService extends BaseService<VendedorEntity, EntidadeCompost
 	@Autowired
 	OmieApiClientService omieApiClientService;
 
-	@Autowired
-	EmpresaService empresaService;
-
 	@Transactional
 	public VendedorEntity criarOuAtualizarPorOmie(VendedorDTO dto, EmpresaEntity empresa) {
 		EntidadeCompostaId id = new EntidadeCompostaId(String.valueOf(dto.getCodigo()), empresa.getCodigo());
@@ -52,8 +49,7 @@ public class VendedorService extends BaseService<VendedorEntity, EntidadeCompost
 	}
 
 	@Transactional
-	public CompletableFuture<ResponseEntity<?>> getAllOmieUpdateBDA() {
-		List<EmpresaEntity> empresas = empresaService.findAll();
+	public CompletableFuture<ResponseEntity<?>> getAllOmieUpdateBDA(List<EmpresaEntity> empresas) {
 
 		if (empresas.isEmpty())
 			return CompletableFuture.completedFuture(ResponseEntity.badRequest().body("Nenhuma Empresa Encontrada"));

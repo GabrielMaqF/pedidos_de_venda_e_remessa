@@ -34,9 +34,6 @@ public class ContaCorrenteService extends BaseService<ContaCorrenteEntity, Entid
 	@Autowired
 	OmieApiClientService omieApiClientService;
 
-	@Autowired
-	EmpresaService empresaService;
-
 	@Transactional
 	public ContaCorrenteEntity criarOuAtualizarPorOmie(ContaCorrenteDTO dto, EmpresaEntity empresa) {
 		EntidadeCompostaId id = new EntidadeCompostaId(String.valueOf(dto.getCodigo()), empresa.getCodigo());
@@ -52,8 +49,7 @@ public class ContaCorrenteService extends BaseService<ContaCorrenteEntity, Entid
 	}
 
 	@Transactional
-	public CompletableFuture<ResponseEntity<?>> getAllOmieUpdateBDA() {
-		List<EmpresaEntity> empresas = empresaService.findAll();
+	public CompletableFuture<ResponseEntity<?>> getAllOmieUpdateBDA(List<EmpresaEntity> empresas) {
 
 		if (empresas.isEmpty())
 			return CompletableFuture.completedFuture(ResponseEntity.badRequest().body("Nenhuma Empresa Encontrada"));
@@ -64,7 +60,8 @@ public class ContaCorrenteService extends BaseService<ContaCorrenteEntity, Entid
 			try {
 				Thread.sleep(1000L);
 				do {
-					OmieListarContaCorrenteResponse res = omieApiClientService.listarContaCorrentePorPagina(e, paginaAtual).get();
+					OmieListarContaCorrenteResponse res = omieApiClientService
+							.listarContaCorrentePorPagina(e, paginaAtual).get();
 
 					if (res == null || res.getContaCorrenteLista().isEmpty())
 						break;

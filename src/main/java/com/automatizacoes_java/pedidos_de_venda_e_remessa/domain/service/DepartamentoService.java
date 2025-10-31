@@ -34,9 +34,6 @@ public class DepartamentoService extends BaseService<DepartamentoEntity, Entidad
 	@Autowired
 	OmieApiClientService omieApiClientService;
 
-	@Autowired
-	EmpresaService empresaService;
-
 	@Transactional
 	public DepartamentoEntity criarOuAtualizarPorOmie(DepartamentoDTO dto, EmpresaEntity empresa) {
 		EntidadeCompostaId id = new EntidadeCompostaId(String.valueOf(dto.getCodigo()), empresa.getCodigo());
@@ -52,8 +49,7 @@ public class DepartamentoService extends BaseService<DepartamentoEntity, Entidad
 	}
 
 	@Transactional
-	public CompletableFuture<ResponseEntity<?>> getAllOmieUpdateBDA() {
-		List<EmpresaEntity> empresas = empresaService.findAll();
+	public CompletableFuture<ResponseEntity<?>> getAllOmieUpdateBDA(List<EmpresaEntity> empresas) {
 
 		if (empresas.isEmpty())
 			return CompletableFuture.completedFuture(ResponseEntity.badRequest().body("Nenhuma Empresa Encontrada"));
@@ -64,8 +60,8 @@ public class DepartamentoService extends BaseService<DepartamentoEntity, Entidad
 			try {
 				Thread.sleep(1000L);
 				do {
-					OmieListarDepartamentoResponse res = omieApiClientService.listarDepartamentoPorPagina(e, paginaAtual)
-							.get();
+					OmieListarDepartamentoResponse res = omieApiClientService
+							.listarDepartamentoPorPagina(e, paginaAtual).get();
 
 					if (res == null || res.getDepartamentos().isEmpty())
 						break;

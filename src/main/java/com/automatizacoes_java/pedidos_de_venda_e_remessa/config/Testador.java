@@ -14,6 +14,7 @@ import org.springframework.scheduling.annotation.Async;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.EmpresaEntity;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.service.CategoriaService;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.service.ClienteFornecedorService;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.service.CnaeService;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.service.ContaCorrenteService;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.service.DepartamentoService;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.service.EmpresaService;
@@ -35,6 +36,7 @@ public class Testador implements CommandLineRunner {
 	private final ContaCorrenteService ccService;
 	private final CategoriaService cgService;
 	private final DepartamentoService dpService;
+	private final CnaeService cnService;
 
 	@Override
 	public void run(String... args) {
@@ -57,12 +59,13 @@ public class Testador implements CommandLineRunner {
 //		checkVendedor(le);
 //		checkContaCorrente(le);
 //		checkCategoria(le);
-		checkDepartamento(le);
+//		checkDepartamento(le);
+//		checkCnae(le);
 	}
 
 	@Async
 	public void checkClienteFornecedor(List<EmpresaEntity> le) {
-		CompletableFuture<ResponseEntity<?>> fut = cfService.getAllOmieUpdateBDA();
+		CompletableFuture<ResponseEntity<?>> fut = cfService.getAllOmieUpdateBDA(le);
 
 		fut.whenComplete((res, ex) -> {
 			if (ex != null) {
@@ -79,7 +82,7 @@ public class Testador implements CommandLineRunner {
 
 	@Async
 	public void checkProjeto(List<EmpresaEntity> le) {
-		CompletableFuture<ResponseEntity<?>> fut = pjService.getAllOmieUpdateBDA();
+		CompletableFuture<ResponseEntity<?>> fut = pjService.getAllOmieUpdateBDA(le);
 
 		fut.whenComplete((res, ex) -> {
 			if (ex != null) {
@@ -96,7 +99,7 @@ public class Testador implements CommandLineRunner {
 
 	@Async
 	public void checkVendedor(List<EmpresaEntity> le) {
-		CompletableFuture<ResponseEntity<?>> fut = vdService.getAllOmieUpdateBDA();
+		CompletableFuture<ResponseEntity<?>> fut = vdService.getAllOmieUpdateBDA(le);
 
 		fut.whenComplete((res, ex) -> {
 			if (ex != null) {
@@ -110,10 +113,10 @@ public class Testador implements CommandLineRunner {
 			}
 		}).join(); // aguarda para garantir que o log apareça no startup
 	}
-	
+
 	@Async
 	public void checkContaCorrente(List<EmpresaEntity> le) {
-		CompletableFuture<ResponseEntity<?>> fut = ccService.getAllOmieUpdateBDA();
+		CompletableFuture<ResponseEntity<?>> fut = ccService.getAllOmieUpdateBDA(le);
 
 		fut.whenComplete((res, ex) -> {
 			if (ex != null) {
@@ -130,8 +133,8 @@ public class Testador implements CommandLineRunner {
 
 	@Async
 	public void checkCategoria(List<EmpresaEntity> le) {
-		CompletableFuture<ResponseEntity<?>> fut = cgService.getAllOmieUpdateBDA();
-		
+		CompletableFuture<ResponseEntity<?>> fut = cgService.getAllOmieUpdateBDA(le);
+
 		fut.whenComplete((res, ex) -> {
 			if (ex != null) {
 				logger.error("Falha no getAllOmieUpdateBDA: {}", ex.toString(), ex);
@@ -144,11 +147,28 @@ public class Testador implements CommandLineRunner {
 			}
 		}).join(); // aguarda para garantir que o log apareça no startup
 	}
-	
+
 	@Async
 	public void checkDepartamento(List<EmpresaEntity> le) {
-		CompletableFuture<ResponseEntity<?>> fut = dpService.getAllOmieUpdateBDA();
-		
+		CompletableFuture<ResponseEntity<?>> fut = dpService.getAllOmieUpdateBDA(le);
+
+		fut.whenComplete((res, ex) -> {
+			if (ex != null) {
+				logger.error("Falha no getAllOmieUpdateBDA: {}", ex.toString(), ex);
+				return;
+			}
+			if (res != null) {
+				logger.info("STATUS: {} | BODY: {}", res.getStatusCode(), res.getBody());
+			} else {
+				logger.warn("Future completou, mas o ResponseEntity veio null");
+			}
+		}).join(); // aguarda para garantir que o log apareça no startup
+	}
+
+	@Async
+	public void checkCnae(List<EmpresaEntity> le) {
+		CompletableFuture<ResponseEntity<?>> fut = cnService.getAllOmieUpdateBDA(le);
+
 		fut.whenComplete((res, ex) -> {
 			if (ex != null) {
 				logger.error("Falha no getAllOmieUpdateBDA: {}", ex.toString(), ex);
