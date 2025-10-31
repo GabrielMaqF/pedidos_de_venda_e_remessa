@@ -60,4 +60,18 @@ public abstract class BaseService<T, ID, C> {
 		return repository.save(obj);
 	}
 
+//	@Transactional
+//	public T criarOuAtualizarPorOmie(DTO dto, EmpresaEntity empresa) {
+//		EntidadeCompostaId id = new EntidadeCompostaId(String.valueOf(dto.getCodigo()), empresa.getCodigo());
+//
+//		// Procura o cliente, se não existir, cria um novo
+//		T entidade = repository.findById(id).orElse(new T(dto, empresa));
+//
+//		// Atualiza os dados com as informações do DTO
+//		entidade.atualizarDados(dto);
+//
+//		// Salva e retorna a entidade gerenciada
+//		return repository.save(entidade);
+//	}
+
 }

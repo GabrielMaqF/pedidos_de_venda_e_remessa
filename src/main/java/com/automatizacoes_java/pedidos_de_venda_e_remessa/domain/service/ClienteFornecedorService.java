@@ -3,7 +3,6 @@ package com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.service;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -52,6 +51,7 @@ public class ClienteFornecedorService extends BaseService<ClienteFornecedorEntit
 		return repository.save(entidade);
 	}
 
+	@Transactional
 	public CompletableFuture<ResponseEntity<?>> getAllOmieUpdateBDA() {
 		List<EmpresaEntity> empresas = empresaService.findAll();
 
@@ -64,19 +64,23 @@ public class ClienteFornecedorService extends BaseService<ClienteFornecedorEntit
 			try {
 				Thread.sleep(1000L);
 				do {
-
 					OmieListarClienteFornecedorResponse res = omieApiClientService
 							.listarClienteFornecedorPorPagina(e, paginaAtual).get();
+
 					if (res == null || res.getClientesCadastrado().isEmpty())
 						break;
 
 					totalPaginas = res.getTotalDePaginas();
 
-					List<ClienteFornecedorEntity> lt = res.getClientesCadastrado().stream()
-							.map(c -> new ClienteFornecedorEntity(c, e)).collect(Collectors.toList());
+					for (ClienteFornecedorDTO dto : res.getClientesCadastrado()) {
+						criarOuAtualizarPorOmie(dto, e); // este método: findById -> atualizarDados -> save
+						totalRegistros++;
+					}
 
-					repository.saveAll(lt);
-					totalRegistros += lt.size();
+					System.out.printf("Empresa:\t%s\t|\tPagina:\t%d\t|\tTotalPagina:\t%d\t|\tTotalRegistros:\t%d%n",
+							e.getNomeFantasia(), paginaAtual, totalPaginas, totalRegistros);
+
+					paginaAtual++; 
 				} while (paginaAtual <= totalPaginas);
 			} catch (InterruptedException | ExecutionException e1) {
 				// TODO Auto-generated catch block
@@ -85,7 +89,8 @@ public class ClienteFornecedorService extends BaseService<ClienteFornecedorEntit
 			}
 		}
 
-		return CompletableFuture.completedFuture(ResponseEntity.ok("Total de " + totalRegistros + " registros persistidos"));
+		return CompletableFuture
+				.completedFuture(ResponseEntity.ok("Total de " + totalRegistros + " registros persistidos"));
 
 	}
 }

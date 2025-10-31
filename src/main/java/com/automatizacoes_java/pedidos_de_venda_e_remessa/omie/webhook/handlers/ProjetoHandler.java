@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.EmpresaEntity;
-import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.dto.ProjetoOmieDTO;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.dto.ProjetoDTO;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.webhook.OmieWebhookActionStrategy;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.webhook.OmieWebhookHandler;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -22,9 +22,9 @@ public class ProjetoHandler implements OmieWebhookHandler {
 	private static final Logger logger = LoggerFactory.getLogger(ClienteHandler.class);
 
 	private final ObjectMapper objectMapper = new ObjectMapper();
-	private final Map<String, OmieWebhookActionStrategy<ProjetoOmieDTO>> actionStrategies;
+	private final Map<String, OmieWebhookActionStrategy<ProjetoDTO>> actionStrategies;
 
-	public ProjetoHandler(List<OmieWebhookActionStrategy<ProjetoOmieDTO>> strategies) {
+	public ProjetoHandler(List<OmieWebhookActionStrategy<ProjetoDTO>> strategies) {
 		this.actionStrategies = strategies.stream()
 				.collect(Collectors.toMap(OmieWebhookActionStrategy::getAcao, Function.identity()));
 	}
@@ -37,7 +37,7 @@ public class ProjetoHandler implements OmieWebhookHandler {
 		logger.info("Valor: {}", event);
 
 		try {
-			ProjetoOmieDTO projetoDto = objectMapper.treeToValue(event, ProjetoOmieDTO.class);
+			ProjetoDTO projetoDto = objectMapper.treeToValue(event, ProjetoDTO.class);
 
 			Optional.ofNullable(actionStrategies.get(acao.toLowerCase())).ifPresentOrElse(
 					strategy -> strategy.processar(projetoDto, empresa),

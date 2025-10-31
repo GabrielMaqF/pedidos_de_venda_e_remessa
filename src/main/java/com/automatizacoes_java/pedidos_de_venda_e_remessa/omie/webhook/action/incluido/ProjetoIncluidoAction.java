@@ -5,17 +5,17 @@ import org.springframework.stereotype.Component;
 
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.EmpresaEntity;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.service.ProjetoService;
-import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.dto.ProjetoOmieDTO;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.dto.ProjetoDTO;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.webhook.OmieWebhookActionStrategy;
 
 @Component
-public class ProjetoIncluidoAction implements OmieWebhookActionStrategy<ProjetoOmieDTO> {
+public class ProjetoIncluidoAction implements OmieWebhookActionStrategy<ProjetoDTO> {
 
 	@Autowired
 	private ProjetoService service;
 
 	@Override
-	public void processar(ProjetoOmieDTO dto, EmpresaEntity empresa) {
+	public void processar(ProjetoDTO dto, EmpresaEntity empresa) {
 		service.criarOuAtualizarPorOmie(dto, empresa);
 
 	}

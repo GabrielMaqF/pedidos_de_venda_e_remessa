@@ -22,6 +22,7 @@ import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.response.OmieList
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.response.OmieListarContratosServicoResponse;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.response.OmieListarNfseResponse;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.response.OmieListarOsResponse;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.response.OmieListarProjetoResponse;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.response.OmieListarServicosResponse;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.response.OmieListarTiposFaturamentoResponse;
 
@@ -46,6 +47,22 @@ public class OmieApiClientService {
 		this.webClient = webClientBuilder.baseUrl(omieProperties.getUrl()).build();
 	}
 
+	public CompletableFuture<OmieListarProjetoResponse> listarProjetoPorPagina(
+			EmpresaEntity empresa, int pagina) {
+		var params = Map.of("pagina", pagina, "registros_por_pagina", REGISTROS_POR_PAGINA, "apenas_importado_api",
+				"N");
+		var payload = new OmieRequestPayload<>("ListarProjetos", empresa.getAppKey(), empresa.getAppSecret(),
+				List.of(params));
+
+		return webClient.post().uri("/geral/projetos/").bodyValue(payload).retrieve()
+				.bodyToMono(OmieListarProjetoResponse.class)
+				.onErrorResume(WebClientResponseException.class, ex -> {
+					handleApiError(ex, "Cliente Fornecedor", empresa.getNomeFantasia(), pagina);
+					return Mono.just(createEmptyProjetoResponse(pagina));
+				}).toFuture();
+
+	}
+	
 	public CompletableFuture<OmieListarClienteFornecedorResponse> listarClienteFornecedorPorPagina(
 			EmpresaEntity empresa, int pagina) {
 		var params = Map.of("pagina", pagina, "registros_por_pagina", REGISTROS_POR_PAGINA, "apenas_importado_api",
@@ -142,7 +159,15 @@ public class OmieApiClientService {
 					ex.getStatusCode(), endpointName, companyName, page, ex.getResponseBodyAsString());
 		}
 	}
-
+	
+	private OmieListarProjetoResponse createEmptyProjetoResponse(int pagina) {
+		OmieListarProjetoResponse emptyResponse = new OmieListarProjetoResponse();
+		emptyResponse.setPagina(pagina);
+		emptyResponse.setTotalDePaginas(pagina - 1);
+		emptyResponse.setCadastro(Collections.emptyList());
+		return emptyResponse;
+	}
+	
 	private OmieListarClienteFornecedorResponse createEmptyClienteFornecedorResponse(int pagina) {
 		OmieListarClienteFornecedorResponse emptyResponse = new OmieListarClienteFornecedorResponse();
 		emptyResponse.setPagina(pagina);

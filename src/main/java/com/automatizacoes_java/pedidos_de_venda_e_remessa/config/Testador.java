@@ -9,58 +9,81 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.EmpresaEntity;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.service.ClienteFornecedorService;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.service.EmpresaService;
-
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.service.ProjetoService;
 
 @Configuration
 @Profile("test")
 public class Testador implements CommandLineRunner {
-	
+
+	private static final Logger logger = LoggerFactory.getLogger(Testador.class);
 	private final EmpresaService eService;
-    private static final Logger logger = LoggerFactory.getLogger(Testador.class);
-    private final ClienteFornecedorService cfService;
+	private final ClienteFornecedorService cfService;
+	private final ProjetoService pjService;
 
-    public Testador(ClienteFornecedorService cfService, EmpresaService eService) {
-		this.cfService = cfService;
+	public Testador(EmpresaService eService, ClienteFornecedorService cfService, ProjetoService pjService) {
 		this.eService = eService;
-        
-    }
+		this.cfService = cfService;
+		this.pjService = pjService;
+	}
 
-    @Override
-    public void run(String... args) {
-        logger.info("--- INICIADO ---");
-        	
-        List<EmpresaEntity> le = eService.findAll();
-        
-        
-        if(le.isEmpty()) {
-        	logger.info("Sem Empresa");
-        	return;
-        }
-        
-        logger.info("Total Empresa: ", le.size());
-        for(EmpresaEntity e : le) {
-        	logger.info(e.toString());
-        }
-        
-        
-        
-        CompletableFuture<ResponseEntity<?>> fut = cfService.getAllOmieUpdateBDA();
+	@Override
+	public void run(String... args) {
+		logger.info("--- INICIADO ---");
 
-        fut.whenComplete((res, ex) -> {
-            if (ex != null) {
-                logger.error("Falha no getAllOmieUpdateBDA: {}", ex.toString(), ex);
-                return;
-            }
-            if (res != null) {
-                logger.info("STATUS: {} | BODY: {}", res.getStatusCode(), res.getBody());
-            } else {
-                logger.warn("Future completou, mas o ResponseEntity veio null");
-            }
-        }).join(); // aguarda para garantir que o log apareça no startup
-    }
+		List<EmpresaEntity> le = eService.findAll();
+
+		if (le.isEmpty()) {
+			logger.info("Sem Empresa");
+			return;
+		}
+
+		logger.info("Total Empresa: ", le.size());
+		for (EmpresaEntity e : le) {
+			logger.info(e.toString());
+		}
+
+//        checkClienteFornecedor(le); 
+		checkProjeto(le);
+
+	}
+
+	@Async
+	public void checkClienteFornecedor(List<EmpresaEntity> le) {
+		CompletableFuture<ResponseEntity<?>> fut = cfService.getAllOmieUpdateBDA();
+
+		fut.whenComplete((res, ex) -> {
+			if (ex != null) {
+				logger.error("Falha no getAllOmieUpdateBDA: {}", ex.toString(), ex);
+				return;
+			}
+			if (res != null) {
+				logger.info("STATUS: {} | BODY: {}", res.getStatusCode(), res.getBody());
+			} else {
+				logger.warn("Future completou, mas o ResponseEntity veio null");
+			}
+		}).join(); // aguarda para garantir que o log apareça no startup
+	}
+
+	@Async
+	public void checkProjeto(List<EmpresaEntity> le) {
+		CompletableFuture<ResponseEntity<?>> fut = pjService.getAllOmieUpdateBDA();
+
+		fut.whenComplete((res, ex) -> {
+			if (ex != null) {
+				logger.error("Falha no getAllOmieUpdateBDA: {}", ex.toString(), ex);
+				return;
+			}
+			if (res != null) {
+				logger.info("STATUS: {} | BODY: {}", res.getStatusCode(), res.getBody());
+			} else {
+				logger.warn("Future completou, mas o ResponseEntity veio null");
+			}
+		}).join(); // aguarda para garantir que o log apareça no startup
+	}
 
 }

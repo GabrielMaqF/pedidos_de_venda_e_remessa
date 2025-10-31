@@ -97,7 +97,7 @@ public class ClienteFornecedorDTO {
 	@JsonProperty("optante_simples_nacional")
 	@JsonDeserialize(using = StringToBooleanDeserializer.class)
 	private Boolean optanteSimplesNacional;
-	
+
 	@Data
 	@NoArgsConstructor
 	@JsonIgnoreProperties(ignoreUnknown = true)
@@ -124,7 +124,7 @@ public class ClienteFornecedorDTO {
 		@JsonDeserialize(using = StringToBooleanDeserializer.class)
 		private Boolean transfPadrao;
 	}
-	
+
 	@Data
 	@NoArgsConstructor
 	@JsonIgnoreProperties(ignoreUnknown = true)
@@ -157,7 +157,7 @@ public class ClienteFornecedorDTO {
 		@JsonProperty("entRazaoSocial")
 		private String entRazaoSocial;
 	}
-	
+
 	@Data
 	@NoArgsConstructor
 	@JsonIgnoreProperties(ignoreUnknown = true)
@@ -185,7 +185,7 @@ public class ClienteFornecedorDTO {
 		@JsonProperty("uInc")
 		private String uInc;
 	}
-	
+
 	@Data
 	@NoArgsConstructor
 	@JsonIgnoreProperties(ignoreUnknown = true)
@@ -204,7 +204,7 @@ public class ClienteFornecedorDTO {
 		@JsonProperty("numero_parcelas")
 		private String numeroParcelas;
 	}
-	
+
 	@Data
 	@NoArgsConstructor
 	@JsonIgnoreProperties(ignoreUnknown = true)

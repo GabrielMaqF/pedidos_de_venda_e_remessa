@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ProjetoOmieDTO {
+public class ProjetoDTO {
 
 	private String codInt, nome;
 	private Long codigo;
