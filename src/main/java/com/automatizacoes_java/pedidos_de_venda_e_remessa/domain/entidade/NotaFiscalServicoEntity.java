@@ -25,6 +25,9 @@ public class NotaFiscalServicoEntity {
 
 	@EmbeddedId
 	private EntidadeCompostaId id;
+	
+	@Column(name = "codigo", insertable = false, updatable = false)
+	private Long codigo;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@MapsId("empresaCodigo") // Mapeia a parte da chave composta
@@ -47,12 +50,31 @@ public class NotaFiscalServicoEntity {
 	@Column(name = "numero_nfse")
 	private String numeroNfse;
 
+	public NotaFiscalServicoEntity(NfseDTO dto, EmpresaEntity empresa) {
+		// A chave primária é o código da NF + código da empresa
+		this.id = new EntidadeCompostaId(String.valueOf(dto.getCabecalho().getCodigoNf()), empresa.getCodigo());
+		this.codigo = dto.getCabecalho().getCodigoNf();
+		this.empresa = empresa;
+		this.atualizarDados(dto);
+	}
+
 	public NotaFiscalServicoEntity(NfseDTO dto, EmpresaEntity empresa, OrdemServicoEntity os) {
 		// A chave primária é o código da NF + código da empresa
 		this.id = new EntidadeCompostaId(String.valueOf(dto.getCabecalho().getCodigoNf()), empresa.getCodigo());
+		this.codigo = dto.getCabecalho().getCodigoNf();
 		this.empresa = empresa;
 		this.ordemServico = os;
 		this.atualizarDados(dto);
+	}
+
+	public void atualizarDados(NfseDTO dto, OrdemServicoEntity os) {
+		if (dto.getCabecalho() != null) {
+			this.numeroNfse = dto.getCabecalho().getNumeroNfse();
+		}
+		
+		if(os != null) {
+			this.ordemServico = os;
+		}
 	}
 
 	public void atualizarDados(NfseDTO dto) {

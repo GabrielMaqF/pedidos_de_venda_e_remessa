@@ -11,7 +11,7 @@ import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.id.Ord
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.id.ServicoPrestadoId;
 
 @Repository
-public interface OrdemServicoRepository extends JpaRepository<OrdemServicoEntity, OrdemServicoId> {
+public interface OrdemServicoRepository extends BaseRepository<OrdemServicoEntity, OrdemServicoId, Long> {
 
 	@Repository
 	public interface OrdemServicoDepartamentoRepository extends JpaRepository<OrdemServicoDepartamentoEntity, Long> {

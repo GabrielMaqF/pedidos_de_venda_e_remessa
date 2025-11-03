@@ -18,6 +18,8 @@ import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.service.CnaeSer
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.service.ContaCorrenteService;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.service.DepartamentoService;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.service.EmpresaService;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.service.NotaFiscalServicoService;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.service.OrdemServicoService;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.service.ProjetoService;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.service.VendedorService;
 
@@ -37,6 +39,8 @@ public class Testador implements CommandLineRunner {
 	private final CategoriaService cgService;
 	private final DepartamentoService dpService;
 	private final CnaeService cnService;
+	private final OrdemServicoService osService;
+	private final NotaFiscalServicoService nfService;
 
 	@Override
 	public void run(String... args) {
@@ -61,6 +65,8 @@ public class Testador implements CommandLineRunner {
 //		checkCategoria(le);
 //		checkDepartamento(le);
 //		checkCnae(le);
+//		checkOrdemServico(le);
+//		checkNotaFiscal(le);
 	}
 
 	@Async
@@ -168,6 +174,40 @@ public class Testador implements CommandLineRunner {
 	@Async
 	public void checkCnae(List<EmpresaEntity> le) {
 		CompletableFuture<ResponseEntity<?>> fut = cnService.getAllOmieUpdateBDA(le);
+
+		fut.whenComplete((res, ex) -> {
+			if (ex != null) {
+				logger.error("Falha no getAllOmieUpdateBDA: {}", ex.toString(), ex);
+				return;
+			}
+			if (res != null) {
+				logger.info("STATUS: {} | BODY: {}", res.getStatusCode(), res.getBody());
+			} else {
+				logger.warn("Future completou, mas o ResponseEntity veio null");
+			}
+		}).join(); // aguarda para garantir que o log apareça no startup
+	}
+
+	@Async
+	public void checkOrdemServico(List<EmpresaEntity> le) {
+		CompletableFuture<ResponseEntity<?>> fut = osService.getAllOmieUpdateBDA(le);
+
+		fut.whenComplete((res, ex) -> {
+			if (ex != null) {
+				logger.error("Falha no getAllOmieUpdateBDA: {}", ex.toString(), ex);
+				return;
+			}
+			if (res != null) {
+				logger.info("STATUS: {} | BODY: {}", res.getStatusCode(), res.getBody());
+			} else {
+				logger.warn("Future completou, mas o ResponseEntity veio null");
+			}
+		}).join(); // aguarda para garantir que o log apareça no startup
+	}
+
+	@Async
+	public void checkNotaFiscal(List<EmpresaEntity> le) {
+		CompletableFuture<ResponseEntity<?>> fut = nfService.getAllOmieUpdateBDA(le);
 
 		fut.whenComplete((res, ex) -> {
 			if (ex != null) {

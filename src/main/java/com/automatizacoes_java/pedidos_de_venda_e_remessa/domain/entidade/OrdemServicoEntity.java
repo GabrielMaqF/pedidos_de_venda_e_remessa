@@ -91,6 +91,7 @@ public class OrdemServicoEntity {
 	private List<NotaFiscalServicoEntity> notasFiscais = new ArrayList<>();
 	// --- FIM DA ALTERAÇÃO ---
 
+	private Long codigo;
 	private String origem;
 	private String numeroOs;
 	private String etapa;
@@ -126,14 +127,26 @@ public class OrdemServicoEntity {
 	@OneToMany(mappedBy = "ordemServico", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
 	private List<OrdemServicoDepartamentoEntity> departamentos = new ArrayList<>();
 
-	public void atualizarDados(OrdemServicoDTO dto, EmpresaEntity empresa, ClienteFornecedorEntity cliente,
+	public OrdemServicoEntity(OrdemServicoDTO dto, EmpresaEntity empresa) {
+		this.id = new OrdemServicoId(dto.getCabecalho().getCodigoOs(), empresa.getCodigo());
+		this.empresa = empresa;
+		this.codigo = dto.getCabecalho().getCodigoOs();
+	}
+
+	public OrdemServicoEntity(OrdemServicoDTO dto, EmpresaEntity empresa, ClienteFornecedorEntity cliente,
 			CategoriaEntity categoria, ContaCorrenteEntity contaCorrente, ProjetoEntity projeto,
 			List<DepartamentoEntity> departamentos, VendedorEntity vendedor) {
 
-		if (this.id == null) {
-			this.id = new OrdemServicoId(dto.getCabecalho().getCodigoOs(), empresa.getCodigo());
-			this.empresa = empresa;
-		}
+		this.id = new OrdemServicoId(dto.getCabecalho().getCodigoOs(), empresa.getCodigo());
+		this.empresa = empresa;
+		this.codigo = dto.getCabecalho().getCodigoOs();
+
+		atualizarDados(dto, cliente, categoria, contaCorrente, projeto, departamentos, vendedor);
+	}
+
+	public void atualizarDados(OrdemServicoDTO dto, ClienteFornecedorEntity cliente, CategoriaEntity categoria,
+			ContaCorrenteEntity contaCorrente, ProjetoEntity projeto, List<DepartamentoEntity> departamentos,
+			VendedorEntity vendedor) {
 
 		this.cliente = cliente;
 		this.categoria = categoria;
@@ -212,13 +225,14 @@ public class OrdemServicoEntity {
 				this.departamentos.add(new OrdemServicoDepartamentoEntity(dto, this, deptoEntity));
 			}
 		});
+
 	}
 
 	@Embeddable
 	@Getter
 	@Setter
 	@NoArgsConstructor
-	public class ImpostosEmbeddable {
+	public static class ImpostosEmbeddable {
 
 		private BigDecimal aliquotaCofins;
 		private BigDecimal aliquotaCsll;
@@ -257,7 +271,7 @@ public class OrdemServicoEntity {
 	@Getter
 	@Setter
 	@NoArgsConstructor
-	public class ServicoPrestadoEntity {
+	public static class ServicoPrestadoEntity {
 
 		@EmbeddedId
 		private ServicoPrestadoId id;
@@ -310,7 +324,7 @@ public class OrdemServicoEntity {
 	@Getter
 	@Setter
 	@NoArgsConstructor
-	public class OrdemServicoParcelaEntity {
+	public static class OrdemServicoParcelaEntity {
 
 		@Id
 		@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -346,7 +360,7 @@ public class OrdemServicoEntity {
 	@Getter
 	@Setter
 	@NoArgsConstructor
-	public class OrdemServicoEmailEntity {
+	public static class OrdemServicoEmailEntity {
 
 		@Id
 		@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -386,7 +400,7 @@ public class OrdemServicoEntity {
 	@Getter
 	@Setter
 	@NoArgsConstructor
-	public class OrdemServicoDepartamentoEntity {
+	public static class OrdemServicoDepartamentoEntity {
 
 		@Id
 		@GeneratedValue(strategy = GenerationType.IDENTITY)

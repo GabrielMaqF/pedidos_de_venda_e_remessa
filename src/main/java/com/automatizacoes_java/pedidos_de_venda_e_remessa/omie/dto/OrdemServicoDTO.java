@@ -44,7 +44,7 @@ public class OrdemServicoDTO {
 
 	@Data
 	@JsonIgnoreProperties(ignoreUnknown = true)
-	public class CabecalhoDTO {
+	public static class CabecalhoDTO {
 
 		@JsonProperty("nCodOS")
 		private Long codigoOs;
@@ -82,7 +82,7 @@ public class OrdemServicoDTO {
 
 	@Data
 	@JsonIgnoreProperties(ignoreUnknown = true)
-	public class DepartamentoOsDTO {
+	public static class DepartamentoOsDTO {
 
 		@JsonProperty("cCodDepto")
 		private String codigoDepartamento;
@@ -104,7 +104,7 @@ public class OrdemServicoDTO {
 	@Getter
 	@Setter
 	@JsonIgnoreProperties(ignoreUnknown = true)
-	public class EmailDTO {
+	public static class EmailDTO {
 
 		private boolean enviaBoleto;
 		private boolean enviaLink;
@@ -142,14 +142,14 @@ public class OrdemServicoDTO {
 			this.enviaViaUnica = "S".equalsIgnoreCase(enviaViaUnica);
 		}
 	}
-	
+
 	@Getter
 	@Setter
 	@JsonIgnoreProperties(ignoreUnknown = true)
-	public class ImpostosDTO {
+	public static class ImpostosDTO {
 
-		private boolean fixarCofins, fixarCsll, fixarInss, fixarIrrf, fixarIss, fixarPis, retemCofins, retemCsll, retemInss,
-				retemIrrf, retemPis;
+		private boolean fixarCofins, fixarCsll, fixarInss, fixarIrrf, fixarIss, fixarPis, retemCofins, retemCsll,
+				retemInss, retemIrrf, retemPis;
 
 		@JsonProperty("lDeduzISS")
 		private boolean deduzIss;
@@ -257,7 +257,7 @@ public class OrdemServicoDTO {
 
 	@Data
 	@JsonIgnoreProperties(ignoreUnknown = true)
-	public class InfoCadastroDTO {
+	public static class InfoCadastroDTO {
 
 		@JsonProperty("dDtInc")
 		private String dataInclusao;
@@ -285,7 +285,7 @@ public class OrdemServicoDTO {
 
 		@JsonProperty("cAmbiente")
 		private String ambiente;
-		
+
 		@JsonProperty("cOrigem")
 		private String origem;
 
@@ -301,10 +301,10 @@ public class OrdemServicoDTO {
 			this.cancelada = "S".equalsIgnoreCase(canceladaStr);
 		}
 	}
-	
+
 	@Data
 	@JsonIgnoreProperties(ignoreUnknown = true)
-	public class InformacoesAdicionaisDTO {
+	public static class InformacoesAdicionaisDTO {
 
 		@JsonProperty("cCodCateg")
 		private String codigoCategoria;
@@ -330,7 +330,7 @@ public class OrdemServicoDTO {
 
 	@Data
 	@JsonIgnoreProperties(ignoreUnknown = true)
-	public class ObservacoesDTO {
+	public static class ObservacoesDTO {
 
 		@JsonProperty("cObsOS")
 		private String observacao;
@@ -339,7 +339,7 @@ public class OrdemServicoDTO {
 
 	@Data
 	@JsonIgnoreProperties(ignoreUnknown = true)
-	public class ParcelaDTO {
+	public static class ParcelaDTO {
 
 		@JsonProperty("nParcela")
 		private Integer numeroParcela;
@@ -367,7 +367,7 @@ public class OrdemServicoDTO {
 	@Getter
 	@Setter
 	@JsonIgnoreProperties(ignoreUnknown = true)
-	public class ServicoPrestadoDTO {
+	public static class ServicoPrestadoDTO {
 
 		@JsonProperty("nIdItem")
 		private Long idItem;
@@ -394,12 +394,12 @@ public class OrdemServicoDTO {
 		private String codigoServicoLC116;
 
 		private String codigoCnae;
-		
+
 		@JsonProperty("cCodServMun")
 		public void setCodigoCnae(String codigoServicoMunicipalStr) {
-			if(codigoServicoMunicipalStr.contains("/")) {
+			if (codigoServicoMunicipalStr.contains("/")) {
 				this.codigoCnae = codigoServicoMunicipalStr.split("/")[0];
-			}else {			
+			} else {
 				this.codigoCnae = codigoServicoMunicipalStr;
 			}
 		}
