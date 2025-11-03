@@ -26,7 +26,7 @@ import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.response.OmieList
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.response.OmieListarNfseResponse;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.response.OmieListarOsResponse;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.response.OmieListarProjetoResponse;
-import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.response.OmieListarServicosResponse;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.response.OmieListarServicoCadastradoResponse;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.response.OmieListarTiposFaturamentoResponse;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.response.OmieListarVendedorResponse;
 
@@ -146,12 +146,14 @@ public class OmieApiClientService {
 				}).toFuture();
 	}
 
-	public CompletableFuture<OmieListarServicosResponse> listarServicosPorPagina(EmpresaEntity empresa, int pagina) {
+	public CompletableFuture<OmieListarServicoCadastradoResponse> listarServicosPorPagina(EmpresaEntity empresa,
+			int pagina) {
 		var params = Map.of("nPagina", pagina, "nRegPorPagina", REGISTROS_POR_PAGINA);
 		var payload = new OmieRequestPayload<>("ListarCadastroServico", empresa.getAppKey(), empresa.getAppSecret(),
 				List.of(params));
 		return webClient.post().uri("/servicos/servico/").bodyValue(payload).retrieve()
-				.bodyToMono(OmieListarServicosResponse.class).onErrorResume(WebClientResponseException.class, ex -> {
+				.bodyToMono(OmieListarServicoCadastradoResponse.class)
+				.onErrorResume(WebClientResponseException.class, ex -> {
 					handleApiError(ex, "Serviços Cadastrados", empresa.getNomeFantasia(), pagina);
 					return Mono.just(createEmptyServicosResponse(pagina));
 				}).toFuture();
@@ -272,8 +274,8 @@ public class OmieApiClientService {
 		return emptyResponse;
 	}
 
-	private OmieListarServicosResponse createEmptyServicosResponse(int pagina) {
-		OmieListarServicosResponse emptyResponse = new OmieListarServicosResponse();
+	private OmieListarServicoCadastradoResponse createEmptyServicosResponse(int pagina) {
+		OmieListarServicoCadastradoResponse emptyResponse = new OmieListarServicoCadastradoResponse();
 		emptyResponse.setPagina(pagina);
 		emptyResponse.setTotalDePaginas(pagina - 1);
 		emptyResponse.setServicos(Collections.emptyList());

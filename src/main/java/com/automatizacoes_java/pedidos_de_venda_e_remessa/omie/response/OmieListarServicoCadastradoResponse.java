@@ -10,7 +10,7 @@ import lombok.Data;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class OmieListarServicosResponse {
+public class OmieListarServicoCadastradoResponse {
 	@JsonProperty("nPagina")
 	private int pagina;
 
