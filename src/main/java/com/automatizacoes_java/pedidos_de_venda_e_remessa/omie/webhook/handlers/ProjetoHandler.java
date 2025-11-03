@@ -19,7 +19,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
 public class ProjetoHandler implements OmieWebhookHandler {
-	private static final Logger logger = LoggerFactory.getLogger(ClienteHandler.class);
+	private static final Logger logger = LoggerFactory.getLogger(ProjetoHandler.class);
 
 	private final ObjectMapper objectMapper = new ObjectMapper();
 	private final Map<String, OmieWebhookActionStrategy<ProjetoDTO>> actionStrategies;

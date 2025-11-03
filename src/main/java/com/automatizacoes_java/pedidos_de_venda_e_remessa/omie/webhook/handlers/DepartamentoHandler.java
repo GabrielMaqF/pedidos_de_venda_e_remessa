@@ -11,45 +11,44 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.EmpresaEntity;
-import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.dto.VendedorDTO;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.dto.DepartamentoDTO;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.webhook.OmieWebhookActionStrategy;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.webhook.OmieWebhookHandler;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
-public class VendedorHandler implements OmieWebhookHandler {
-	private static final Logger logger = LoggerFactory.getLogger(VendedorHandler.class);
+public class DepartamentoHandler implements OmieWebhookHandler {
+	private static final Logger logger = LoggerFactory.getLogger(DepartamentoHandler.class);
 
 	private final ObjectMapper objectMapper = new ObjectMapper();
+	private final Map<String, OmieWebhookActionStrategy<DepartamentoDTO>> actionStrategies;
 
-	private final Map<String, OmieWebhookActionStrategy<VendedorDTO>> actionStrategies;
-
-	public VendedorHandler(List<OmieWebhookActionStrategy<VendedorDTO>> strategies) {
+	public DepartamentoHandler(List<OmieWebhookActionStrategy<DepartamentoDTO>> strategies) {
 		this.actionStrategies = strategies.stream()
 				.collect(Collectors.toMap(OmieWebhookActionStrategy::getAcao, Function.identity()));
 	}
 
 	@Override
 	public void processar(JsonNode event, EmpresaEntity empresa, String acao) {
-		logger.info("Webhook da OMIE recebido para Vendedor");
+		logger.info("Webhook da OMIE recebido para Projeto");
 		logger.info("Empresa: {}", empresa);
 		logger.info("Acao: {}", acao);
 		logger.info("Valor: {}", event);
 
 		try {
-			VendedorDTO dto = objectMapper.treeToValue(event, VendedorDTO.class);
+			DepartamentoDTO projetoDto = objectMapper.treeToValue(event, DepartamentoDTO.class);
 
 			Optional.ofNullable(actionStrategies.get(acao.toLowerCase())).ifPresentOrElse(
-					strategy -> strategy.processar(dto, empresa),
+					strategy -> strategy.processar(projetoDto, empresa),
 					() -> logger.warn("Nenhuma estratégia de ação encontrada para '{}' em Ordem de Serviço.", acao));
 		} catch (Exception e) {
-			// TODO: handle exception
 		}
 	}
 
 	@Override
 	public String getTopicName() {
-		return "vendedor";
+		return "departamento";
 	}
+
 }

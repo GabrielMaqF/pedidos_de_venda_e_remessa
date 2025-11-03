@@ -11,48 +11,44 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.EmpresaEntity;
-import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.dto.ClienteFornecedorDTO;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.dto.CategoriaDTO;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.webhook.OmieWebhookActionStrategy;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.webhook.OmieWebhookHandler;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Component
-public class ClienteHandler implements OmieWebhookHandler {
-	private static final Logger logger = LoggerFactory.getLogger(ClienteHandler.class);
+public class CategoriaHandler implements OmieWebhookHandler {
+	private static final Logger logger = LoggerFactory.getLogger(CategoriaHandler.class);
 
 	private final ObjectMapper objectMapper = new ObjectMapper();
+	private final Map<String, OmieWebhookActionStrategy<CategoriaDTO>> actionStrategies;
 
-	private final Map<String, OmieWebhookActionStrategy<ClienteFornecedorDTO>> actionStrategies;
-
-	public ClienteHandler(List<OmieWebhookActionStrategy<ClienteFornecedorDTO>> strategies) {
+	public CategoriaHandler(List<OmieWebhookActionStrategy<CategoriaDTO>> strategies) {
 		this.actionStrategies = strategies.stream()
 				.collect(Collectors.toMap(OmieWebhookActionStrategy::getAcao, Function.identity()));
 	}
 
 	@Override
 	public void processar(JsonNode event, EmpresaEntity empresa, String acao) {
-		logger.info("Webhook da OMIE recebido para Cliente");
+		logger.info("Webhook da OMIE recebido para Projeto");
 		logger.info("Empresa: {}", empresa);
 		logger.info("Acao: {}", acao);
 		logger.info("Valor: {}", event);
 
 		try {
-			ClienteFornecedorDTO dto = objectMapper.treeToValue(event, ClienteFornecedorDTO.class);
+			CategoriaDTO projetoDto = objectMapper.treeToValue(event, CategoriaDTO.class);
 
 			Optional.ofNullable(actionStrategies.get(acao.toLowerCase())).ifPresentOrElse(
-					strategy -> strategy.processar(dto, empresa),
+					strategy -> strategy.processar(projetoDto, empresa),
 					() -> logger.warn("Nenhuma estratégia de ação encontrada para '{}' em Ordem de Serviço.", acao));
-
 		} catch (Exception e) {
-			// TODO: handle exception
 		}
-
 	}
 
 	@Override
 	public String getTopicName() {
-		return "clientefornecedor";
+		return "categoria";
 	}
 
 }

@@ -1,4 +1,4 @@
-package com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.webhook.action.incluido;
+package com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.webhook.action.alterado;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -9,7 +9,7 @@ import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.dto.ClienteFornec
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.webhook.OmieWebhookActionStrategy;
 
 @Component
-public class ClienteIncluidoAction implements OmieWebhookActionStrategy<ClienteFornecedorDTO> {
+public class ClienteFornecedorAlteradoAction implements OmieWebhookActionStrategy<ClienteFornecedorDTO> {
 
 	@Autowired
 	private ClienteFornecedorService service;
@@ -21,7 +21,7 @@ public class ClienteIncluidoAction implements OmieWebhookActionStrategy<ClienteF
 
 	@Override
 	public String getAcao() {
-		return "incluido";
+		return "alterado";
 	}
 
 }
