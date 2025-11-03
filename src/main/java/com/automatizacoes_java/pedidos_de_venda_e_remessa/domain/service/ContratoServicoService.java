@@ -8,18 +8,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.ContratoServicoEntity;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.EmpresaEntity;
-import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.ServicoCadastroEntity;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade.id.EntidadeCompostaId;
-import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.repository.ServicoCadastroRepository;
-import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.dto.ServicoCadastroDTO;
-import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.response.OmieListarServicoCadastradoResponse;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.repository.ContratoServicoRepository;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.dto.ContratoServicoCadastroDTO;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.response.OmieListarContratosServicoResponse;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.omie.service.OmieApiClientService;
 
 import jakarta.transaction.Transactional;
 
 @Service
-public class ServicoCadastroService extends BaseService<ServicoCadastroEntity, EntidadeCompostaId, Long> {
+public class ContratoServicoService {
 
 	/**
 	 * O Spring injetará o ClienteRepository aqui automaticamente. Nós então o
@@ -29,18 +29,18 @@ public class ServicoCadastroService extends BaseService<ServicoCadastroEntity, E
 	 * @param clienteRepository O repositório específico para ClienteEntity.
 	 */
 	@Autowired
-	ServicoCadastroRepository repository;
+	ContratoServicoRepository repository;
 
 	@Autowired
 	OmieApiClientService omieApiClientService;
 
 	@Transactional
-	public ServicoCadastroEntity criarOuAtualizarPorOmie(ServicoCadastroDTO dto, EmpresaEntity empresa) {
-		EntidadeCompostaId id = new EntidadeCompostaId(String.valueOf(dto.getCabecalho().getCodigo()),
+	public ContratoServicoEntity criarOuAtualizarPorOmie(ContratoServicoCadastroDTO dto, EmpresaEntity empresa) {
+		EntidadeCompostaId id = new EntidadeCompostaId(String.valueOf(dto.getCabecalho().getCodigoContrato()),
 				empresa.getCodigo());
 
 		// Procura o cliente, se não existir, cria um novo
-		ServicoCadastroEntity entidade = repository.findById(id).orElse(new ServicoCadastroEntity(dto, empresa));
+		ContratoServicoEntity entidade = repository.findById(id).orElse(new ContratoServicoEntity(dto, empresa));
 
 		// Atualiza os dados com as informações do DTO
 		entidade.atualizarDados(dto);
@@ -55,21 +55,21 @@ public class ServicoCadastroService extends BaseService<ServicoCadastroEntity, E
 		if (empresas.isEmpty())
 			return CompletableFuture.completedFuture(ResponseEntity.badRequest().body("Nenhuma Empresa Encontrada"));
 
-		int paginaAtual = 1, totalPaginas, totalRegistros = 0;
+		int paginaAtual = 1, totalPaginas = 0, totalRegistros = 0;
 		for (EmpresaEntity e : empresas) {
 
 			try {
 				Thread.sleep(1000L);
 				do {
-					OmieListarServicoCadastradoResponse res = omieApiClientService
-							.listarServicoCadastradoPorPagina(e, paginaAtual).get();
+					OmieListarContratosServicoResponse res = omieApiClientService
+							.listarContratoServicoPorPagina(e, paginaAtual).get();
 
-					if (res == null || res.getServicos().isEmpty())
+					if (res == null || res.getContratos() == null || res.getContratos().isEmpty())
 						break;
 
 					totalPaginas = res.getTotalDePaginas();
 
-					for (ServicoCadastroDTO dto : res.getServicos()) {
+					for (ContratoServicoCadastroDTO dto : res.getContratos()) {
 						criarOuAtualizarPorOmie(dto, e); // este método: findById -> atualizarDados -> save
 						totalRegistros++;
 					}

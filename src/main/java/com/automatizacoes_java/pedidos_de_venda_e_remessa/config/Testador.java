@@ -16,6 +16,7 @@ import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.service.Categor
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.service.ClienteFornecedorService;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.service.CnaeService;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.service.ContaCorrenteService;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.service.ContratoServicoService;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.service.DepartamentoService;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.service.EmpresaService;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.service.NotaFiscalServicoService;
@@ -45,6 +46,7 @@ public class Testador implements CommandLineRunner {
 	private final NotaFiscalServicoService nfService;
 	private final TipoFaturamentoContratoService tpcService;
 	private final ServicoCadastroService scService;
+	private final ContratoServicoService csService;
 
 	@Override
 	public void run(String... args) {
@@ -69,10 +71,11 @@ public class Testador implements CommandLineRunner {
 //		checkCategoria(le);
 //		checkDepartamento(le);
 //		checkCnae(le);
+//		checkTipoFaturamentoContrato(le);
+//		checkServicoCadastrado(le);
 //		checkOrdemServico(le);
 //		checkNotaFiscal(le);
-		checkTipoFaturamentoContrato(le);
-		checkServicoCadastrado(le);
+		checkContratoServico(le);
 	}
 
 	@Async
@@ -236,12 +239,12 @@ public class Testador implements CommandLineRunner {
 			}
 		}).join(); // aguarda para garantir que o log apareça no startup
 	}
-	
+
 	@Async
 	public void checkTipoFaturamentoContrato(List<EmpresaEntity> le) {
 		logger.info("-----> Init Tipo Faturamento Contrato");
 		CompletableFuture<ResponseEntity<?>> fut = tpcService.getAllOmieUpdateBDA(le);
-		
+
 		fut.whenComplete((res, ex) -> {
 			if (ex != null) {
 				logger.error("Falha no getAllOmieUpdateBDA: {}", ex.toString(), ex);
@@ -259,6 +262,24 @@ public class Testador implements CommandLineRunner {
 	public void checkServicoCadastrado(List<EmpresaEntity> le) {
 		logger.info("-----> Init Servico Cadastrado");
 		CompletableFuture<ResponseEntity<?>> fut = scService.getAllOmieUpdateBDA(le);
+
+		fut.whenComplete((res, ex) -> {
+			if (ex != null) {
+				logger.error("Falha no getAllOmieUpdateBDA: {}", ex.toString(), ex);
+				return;
+			}
+			if (res != null) {
+				logger.info("STATUS: {} | BODY: {}", res.getStatusCode(), res.getBody());
+			} else {
+				logger.warn("Future completou, mas o ResponseEntity veio null");
+			}
+		}).join(); // aguarda para garantir que o log apareça no startup
+	}
+
+	@Async
+	public void checkContratoServico(List<EmpresaEntity> le) {
+		logger.info("-----> Init Contrato Servico");
+		CompletableFuture<ResponseEntity<?>> fut = csService.getAllOmieUpdateBDA(le);
 
 		fut.whenComplete((res, ex) -> {
 			if (ex != null) {

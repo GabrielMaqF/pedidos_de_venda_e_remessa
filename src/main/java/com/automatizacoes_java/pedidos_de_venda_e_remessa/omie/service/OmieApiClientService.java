@@ -146,7 +146,7 @@ public class OmieApiClientService {
 				}).toFuture();
 	}
 
-	public CompletableFuture<OmieListarServicoCadastradoResponse> listarServicosPorPagina(EmpresaEntity empresa,
+	public CompletableFuture<OmieListarServicoCadastradoResponse> listarServicoCadastradoPorPagina(EmpresaEntity empresa,
 			int pagina) {
 		var params = Map.of("nPagina", pagina, "nRegPorPagina", REGISTROS_POR_PAGINA);
 		var payload = new OmieRequestPayload<>("ListarCadastroServico", empresa.getAppKey(), empresa.getAppSecret(),
@@ -155,11 +155,11 @@ public class OmieApiClientService {
 				.bodyToMono(OmieListarServicoCadastradoResponse.class)
 				.onErrorResume(WebClientResponseException.class, ex -> {
 					handleApiError(ex, "Serviços Cadastrados", empresa.getNomeFantasia(), pagina);
-					return Mono.just(createEmptyServicosResponse(pagina));
+					return Mono.just(createEmptyServicoCadastradoResponse(pagina));
 				}).toFuture();
 	}
 
-	public CompletableFuture<OmieListarContratosServicoResponse> listarContratosPorPagina(EmpresaEntity empresa,
+	public CompletableFuture<OmieListarContratosServicoResponse> listarContratoServicoPorPagina(EmpresaEntity empresa,
 			int pagina) {
 		var params = Map.of("pagina", pagina, "registros_por_pagina", REGISTROS_POR_PAGINA, "apenas_importado_api",
 				"N");
@@ -274,7 +274,7 @@ public class OmieApiClientService {
 		return emptyResponse;
 	}
 
-	private OmieListarServicoCadastradoResponse createEmptyServicosResponse(int pagina) {
+	private OmieListarServicoCadastradoResponse createEmptyServicoCadastradoResponse(int pagina) {
 		OmieListarServicoCadastradoResponse emptyResponse = new OmieListarServicoCadastradoResponse();
 		emptyResponse.setPagina(pagina);
 		emptyResponse.setTotalDePaginas(pagina - 1);
