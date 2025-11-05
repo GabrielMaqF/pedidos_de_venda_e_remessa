@@ -43,24 +43,24 @@ public class TipoFaturamentoContratoService {
 		if (e == null)
 			return CompletableFuture.completedFuture(ResponseEntity.badRequest().body("Nenhuma Empresa Encontrada"));
 
-		int paginaAtual = 1, totalPaginas, totalRegistros = 0;
+		int  totalRegistros = 0;
 
 		try {
 			Thread.sleep(1000L);
 			OmieListarTiposFaturamentoResponse res = omieApiClientService.listarTiposFaturamento(e).get();
 
 			if (res == null || res.getCadastros().isEmpty())
-				return CompletableFuture.completedFuture(ResponseEntity.badRequest().body("Tipos de Faturamento de Contrato VAZIO!"));
+				return CompletableFuture
+						.completedFuture(ResponseEntity.badRequest().body("Tipos de Faturamento de Contrato VAZIO!"));
 
-			totalPaginas = res.getTotalDePaginas();
+//			totalPaginas = res.getTotalDePaginas();
 
 			for (TipoFaturamentoContratoDTO dto : res.getCadastros()) {
 				criarOuAtualizarPorOmie(dto); // este método: findById -> atualizarDados -> save
 				totalRegistros++;
 			}
 
-			System.out.printf("Empresa:\t%s\t|\tPagina:\t%d\t|\tTotalPagina:\t%d\t|\tTotalRegistros:\t%d%n",
-					e.getNomeFantasia(), paginaAtual, totalPaginas, totalRegistros);
+//			System.out.printf("Empresa:\t%s\t|\tPagina:\t%d\t|\tTotalPagina:\t%d\t|\tTotalRegistros:\t%d%n",e.getNomeFantasia(), paginaAtual, totalPaginas, totalRegistros);
 
 		} catch (InterruptedException | ExecutionException e1) {
 			// TODO Auto-generated catch block

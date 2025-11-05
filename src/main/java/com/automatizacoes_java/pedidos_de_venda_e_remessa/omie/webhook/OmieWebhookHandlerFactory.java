@@ -19,7 +19,7 @@ public class OmieWebhookHandlerFactory {
 	}
 
 	public Optional<OmieWebhookHandler> getHandler(String topicName) {
-		System.out.println("TOPICO:\t" + topicName.toLowerCase());
+//		System.out.println("TOPICO:\t" + topicName.toLowerCase());
 		return Optional.ofNullable(handlers.get(topicName.toLowerCase()));
 	}
 }

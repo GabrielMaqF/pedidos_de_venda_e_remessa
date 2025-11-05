@@ -59,8 +59,7 @@ public class CnaeService {
 					totalRegistros++;
 				}
 
-				System.out.printf("Empresa:\t%s\t|\tPagina:\t%d\t|\tTotalPagina:\t%d\t|\tTotalRegistros:\t%d%n",
-						e.getNomeFantasia(), paginaAtual, totalPaginas, totalRegistros);
+//				System.out.printf("Empresa:\t%s\t|\tPagina:\t%d\t|\tTotalPagina:\t%d\t|\tTotalRegistros:\t%d%n",e.getNomeFantasia(), paginaAtual, totalPaginas, totalRegistros);
 
 				paginaAtual++;
 			} while (paginaAtual <= totalPaginas);

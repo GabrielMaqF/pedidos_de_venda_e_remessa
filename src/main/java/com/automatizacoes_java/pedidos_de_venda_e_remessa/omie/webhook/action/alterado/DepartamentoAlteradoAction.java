@@ -22,7 +22,7 @@ public class DepartamentoAlteradoAction implements OmieWebhookActionStrategy<Dep
 
 	@Override
 	public String getAcao() {
-		return "incluido";
+		return "alterado";
 	}
 
 }

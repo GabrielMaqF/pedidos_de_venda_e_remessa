@@ -23,7 +23,13 @@ public class OmieWebhookController {
 
 	@PostMapping("")
 	public ResponseEntity<String> handleOmieWebhook(@RequestBody OmieWebhookDTO payload) {
-		logger.info("Webhook da OMIE recebido para o tópico: {}", payload.getTopic());
+		
+		if(payload.getPingOmie() != null && payload.getPingOmie().equals("omie")) {
+			logger.info("Webhook Ping OMIE: {}", payload.getPingOmie());
+			return ResponseEntity.ok("Ping OMIE Success!");
+		}
+		
+		logger.info("Webhook da OMIE recebido para o tópico: {}", payload);
 
 		if (payload.getTopic() == null || payload.getAppKey() == null) {
 			return ResponseEntity.badRequest().body("Payload invalido.");
@@ -33,5 +39,5 @@ public class OmieWebhookController {
 
 		return ResponseEntity.ok("Evento recebido.");
 	}
-
+	
 }

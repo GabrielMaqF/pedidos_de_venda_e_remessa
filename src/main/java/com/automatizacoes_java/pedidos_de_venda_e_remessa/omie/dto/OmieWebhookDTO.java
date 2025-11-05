@@ -30,5 +30,8 @@ public class OmieWebhookDTO {
 
 	@JsonProperty("origin")
 	private String origin;
+	
+	@JsonProperty("ping")
+	private String pingOmie;
 
 }

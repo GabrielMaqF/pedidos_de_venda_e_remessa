@@ -64,7 +64,7 @@ public class Testador implements CommandLineRunner {
 			logger.info(e.toString());
 		}
 
-//      checkClienteFornecedor(le); 
+//		checkClienteFornecedor(le);
 //		checkProjeto(le);
 //		checkVendedor(le);
 //		checkContaCorrente(le);
@@ -75,7 +75,7 @@ public class Testador implements CommandLineRunner {
 //		checkServicoCadastrado(le);
 //		checkOrdemServico(le);
 //		checkNotaFiscal(le);
-		checkContratoServico(le);
+//		checkContratoServico(le);
 	}
 
 	@Async

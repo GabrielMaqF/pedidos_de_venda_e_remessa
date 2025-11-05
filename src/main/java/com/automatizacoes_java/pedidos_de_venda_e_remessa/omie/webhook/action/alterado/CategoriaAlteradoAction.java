@@ -22,7 +22,7 @@ public class CategoriaAlteradoAction implements OmieWebhookActionStrategy<Catego
 
 	@Override
 	public String getAcao() {
-		return "incluido";
+		return "alterado";
 	}
 
 }

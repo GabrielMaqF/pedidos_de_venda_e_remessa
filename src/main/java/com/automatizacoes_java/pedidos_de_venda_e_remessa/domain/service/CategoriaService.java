@@ -53,9 +53,10 @@ public class CategoriaService extends BaseService<CategoriaEntity, EntidadeCompo
 
 		if (empresas.isEmpty())
 			return CompletableFuture.completedFuture(ResponseEntity.badRequest().body("Nenhuma Empresa Encontrada"));
-
-		int paginaAtual = 1, totalPaginas, totalRegistros = 0;
+		
+		int totalRegistros = 0;
 		for (EmpresaEntity e : empresas) {
+			int paginaAtual = 1, totalPaginas = 0;
 
 			try {
 				Thread.sleep(1000L);
@@ -73,8 +74,7 @@ public class CategoriaService extends BaseService<CategoriaEntity, EntidadeCompo
 						totalRegistros++;
 					}
 
-					System.out.printf("Empresa:\t%s\t|\tPagina:\t%d\t|\tTotalPagina:\t%d\t|\tTotalRegistros:\t%d%n",
-							e.getNomeFantasia(), paginaAtual, totalPaginas, totalRegistros);
+//					System.out.printf("Empresa:\t%s\t|\tPagina:\t%d\t|\tTotalPagina:\t%d\t|\tTotalRegistros:\t%d%n", e.getNomeFantasia(), paginaAtual, totalPaginas, totalRegistros);
 
 					paginaAtual++;
 				} while (paginaAtual <= totalPaginas);

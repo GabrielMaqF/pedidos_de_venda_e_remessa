@@ -14,7 +14,7 @@ public class TokenCacheHandler {
             TokenCache cache = new TokenCache(token.getAccessToken(), expiresAt);
             mapper.writeValue(new File(TOKEN_FILE), cache);
         } catch (IOException e) {
-            System.err.println("Erro ao salvar token no cache: " + e.getMessage());
+//            System.err.println("Erro ao salvar token no cache: " + e.getMessage());
         }
     }
 
@@ -25,7 +25,7 @@ public class TokenCacheHandler {
                 return mapper.readValue(file, TokenCache.class);
             }
         } catch (IOException e) {
-            System.err.println("Erro ao ler token do cache: " + e.getMessage());
+//            System.err.println("Erro ao ler token do cache: " + e.getMessage());
         }
         return null;
     }

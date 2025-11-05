@@ -21,7 +21,7 @@ public class ContratoServicoAlteradoAction implements OmieWebhookActionStrategy<
 
 	@Override
 	public String getAcao() {
-		return "incluido";
+		return "alterado";
 	}
 
 }
