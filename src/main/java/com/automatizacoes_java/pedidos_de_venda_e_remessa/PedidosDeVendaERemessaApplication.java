@@ -5,12 +5,12 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.scheduling.annotation.EnableAsync;
 
-import com.automatizacoes_java.pedidos_de_venda_e_remessa.microsoft.config.GraphProperties;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.microsoft.config.GraphExcelProperties;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.microsoft.config.GraphTokenProperties;
 
 @SpringBootApplication
 @EnableAsync
-@EnableConfigurationProperties({ GraphTokenProperties.class, GraphProperties.class })
+@EnableConfigurationProperties({ GraphTokenProperties.class, GraphExcelProperties.class })
 //Sem Sharepoint
 public class PedidosDeVendaERemessaApplication {
 

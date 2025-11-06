@@ -8,7 +8,8 @@ import lombok.Setter;
 
 @ConfigurationProperties(prefix = "api.microsoft.graph")
 @Validated
-@Getter @Setter
+@Getter
+@Setter
 public class GraphTokenProperties {
 
 	private String urlToken;
