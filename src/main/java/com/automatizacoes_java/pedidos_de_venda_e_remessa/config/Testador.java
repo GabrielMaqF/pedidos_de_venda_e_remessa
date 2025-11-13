@@ -19,12 +19,15 @@ import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.service.ContaCo
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.service.ContratoServicoService;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.service.DepartamentoService;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.service.EmpresaService;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.service.LocalEstoqueService;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.service.NotaFiscalServicoService;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.service.OrdemServicoService;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.service.ProdutoService;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.service.ProjetoService;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.service.ServicoCadastroService;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.service.TipoFaturamentoContratoService;
 import com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.service.VendedorService;
+import com.automatizacoes_java.pedidos_de_venda_e_remessa.microsoft.excel.service.ExcelOrdemServicoService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -47,6 +50,10 @@ public class Testador implements CommandLineRunner {
 	private final TipoFaturamentoContratoService tpcService;
 	private final ServicoCadastroService scService;
 	private final ContratoServicoService csService;
+	private final ProdutoService pdService;
+	private final LocalEstoqueService leService;
+
+	private final ExcelOrdemServicoService excelOsService;
 
 	@Override
 	public void run(String... args) {
@@ -76,6 +83,10 @@ public class Testador implements CommandLineRunner {
 //		checkOrdemServico(le);
 //		checkNotaFiscal(le);
 //		checkContratoServico(le);
+//		checkProduto(le);
+		checkLocalEstoque(le);
+		
+//		excelOsService.atualizarTabelaOSComRelatorio();
 	}
 
 	@Async
@@ -281,6 +292,42 @@ public class Testador implements CommandLineRunner {
 		logger.info("-----> Init Contrato Servico");
 		CompletableFuture<ResponseEntity<?>> fut = csService.getAllOmieUpdateBDA(le);
 
+		fut.whenComplete((res, ex) -> {
+			if (ex != null) {
+				logger.error("Falha no getAllOmieUpdateBDA: {}", ex.toString(), ex);
+				return;
+			}
+			if (res != null) {
+				logger.info("STATUS: {} | BODY: {}", res.getStatusCode(), res.getBody());
+			} else {
+				logger.warn("Future completou, mas o ResponseEntity veio null");
+			}
+		}).join(); // aguarda para garantir que o log apareça no startup
+	}
+
+	@Async
+	public void checkProduto(List<EmpresaEntity> le) {
+		logger.info("-----> Init Produto");
+		CompletableFuture<ResponseEntity<?>> fut = pdService.getAllOmieUpdateBDA(le);
+
+		fut.whenComplete((res, ex) -> {
+			if (ex != null) {
+				logger.error("Falha no getAllOmieUpdateBDA: {}", ex.toString(), ex);
+				return;
+			}
+			if (res != null) {
+				logger.info("STATUS: {} | BODY: {}", res.getStatusCode(), res.getBody());
+			} else {
+				logger.warn("Future completou, mas o ResponseEntity veio null");
+			}
+		}).join(); // aguarda para garantir que o log apareça no startup
+	}
+	
+	@Async
+	public void checkLocalEstoque(List<EmpresaEntity> le) {
+		logger.info("-----> Init Local Estoque");
+		CompletableFuture<ResponseEntity<?>> fut = leService.getAllOmieUpdateBDA(le);
+		
 		fut.whenComplete((res, ex) -> {
 			if (ex != null) {
 				logger.error("Falha no getAllOmieUpdateBDA: {}", ex.toString(), ex);

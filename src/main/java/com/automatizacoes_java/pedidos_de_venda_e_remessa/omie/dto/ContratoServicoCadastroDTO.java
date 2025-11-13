@@ -21,7 +21,7 @@ public class ContratoServicoCadastroDTO {
 	@JsonIgnoreProperties(ignoreUnknown = true)
 	public static class CabecalhoContratoServicoDTO {
 
-		@JsonProperty("nDiaFat")
+		@JsonProperty("nCodCtr")
 		private Long codigoContrato;
 
 		@JsonProperty("cNumCtr")

@@ -26,6 +26,7 @@ public class EmpresaEntity {
 	private String razaoSocial;
 	private String nomeFantasia;
 	private String cnpj;
+}
 
 //	public EmpresaEntity(EmpresaSharepointDTO dto) {
 //		this.setSharepointId(dto.getId());
@@ -40,7 +41,6 @@ public class EmpresaEntity {
 //		this.nomeFantasia = dto.getNomeFantasia();
 //		this.cnpj = dto.getCnpj();
 //	}
-}
 
 //package com.automatizacoes_java.pedidos_de_venda_e_remessa.domain.entidade;
 //

@@ -1,30 +1,29 @@
 package com.automatizacoes_java.pedidos_de_venda_e_remessa.microsoft.config;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Component;
+import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
+import jakarta.annotation.PostConstruct;
 import lombok.Getter;
 import lombok.Setter;
 
-@Component
+@ConfigurationProperties(prefix = "api.microsoft.graph.excel.id.comercial")
 @Validated
 @Getter
 @Setter
 public class GraphExcelProperties {
 
-	@Value("${api.microsoft.graph.excel.id.drive.gabriel}")
-	private String driveGabriel;
-	@Value("$api.microsoft.graph.excel.id.relatorio.ordem-servico")
-	private String arquivoRelatorioOS;
-	@Value("${api.microsoft.graph.excel.id.relatorio.ordem-servico.table}")
-	private String tabelaRelatorioOS;
+	private String siteShP;
+	private String arquivoRelatorio;
+	private String tabelaRelatorioOS = "TabelaOS";
+	private String tabelaRelatorioPDV = "TabelaPDV";
 
-//	@PostConstruct
-//	public void init() {
-//		System.out.println("============ PROPERTIES ==========");
-//		System.out.println(driveGabriel);
-//		System.out.println(arquivoRelatorioOS);
-//		System.out.println(tabelaRelatorioOS);
-//	}
+	@PostConstruct
+	public void init() {
+		System.out.println("============ PROPERTIES ==========");
+		System.out.println("siteShP: " + siteShP);
+		System.out.println("arquivoRelatorio: " + arquivoRelatorio);
+		System.out.println("tabelaRelatorioOS: " + tabelaRelatorioOS);
+		System.out.println("tabelaRelatorioPDV: " + tabelaRelatorioPDV);
+	}
 }

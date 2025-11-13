@@ -9,9 +9,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 @Data
-
 @JsonIgnoreProperties(ignoreUnknown = true)
-
 public class OmieListarCnaeResponse {
 
 	@JsonProperty("pagina")
@@ -21,7 +19,6 @@ public class OmieListarCnaeResponse {
 	private int totalDePaginas;
 
 	@JsonProperty("cadastros")
-
 	private List<CnaeDTO> cadastros;
 
 }

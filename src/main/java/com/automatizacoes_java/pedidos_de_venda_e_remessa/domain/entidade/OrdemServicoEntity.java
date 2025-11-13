@@ -186,12 +186,21 @@ public class OrdemServicoEntity {
 			this.observacoesOs = obs.getObservacao();
 		});
 
-		// RESTAURANDO A LÓGICA ANTERIOR AQUI
+		atualizarServicos(dto.getServicosPrestados());
 		atualizarEmail(dto.getEmail());
 		atualizarParcelas(dto.getParcelas());
 		atualizarDepartamentos(dto.getDepartamentos(), departamentos);
 	}
 
+	public void atualizarServicos(List<ServicoPrestadoDTO> dtos) {
+	    
+	    this.servicos.clear();// Limpa a lista atual pra respeitar orphanRemoval = true
+
+	    if (dtos != null) {
+	        dtos.forEach(dto -> this.servicos.add(new ServicoPrestadoEntity(dto, this)));
+	    }
+	}
+	
 	public void atualizarEmail(EmailDTO emailDto) {
 		if (emailDto != null) {
 			if (this.email == null) {
